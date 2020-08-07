@@ -59,7 +59,7 @@
         ,{
             "path" : "pages/familyTrust/familyTrust",
             "style" : {
-							"navigationBarTitleText": "家族信托管理中心"
+							"navigationBarTitleText": "家族财富"
 						}
         }
         ,{

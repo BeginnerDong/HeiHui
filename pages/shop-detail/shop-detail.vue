@@ -4,22 +4,22 @@
 		<!-- banner -->
 		<view class="banner p-r">
 			<swiper class="swiper-box" indicator-dots="indicatorDots" autoplay="autoplay" interval="3000" indicator-active-color="#FF6F48">
-				<block>
-					<swiper-item class="swiper-item">
-						<image src="../../static/images/goods details-img.png" class="slide-image" />
+				<block class="swiper-item" v-for="(item,index) in mainData.bannerImg">
+					<swiper-item>
+						<image :src="item.url" class="slide-image" />
 					</swiper-item>
 				</block>
 			</swiper>
 		</view>
 		
 		<view class="bg-white p-3 mb-2">
-			<view class="font-32 pb-4 font-w">LOVE礼盒系列·生生不息的爱</view>
+			<view class="font-32 pb-4 font-w">{{mainData.title}}</view>
 			<view class="flex1">
 				<view class="colorR font-32">
-					<text class="price1 font-w pb-2">78.8</text>/
-					<text class="priceV font-w">68.8</text>
+					<text class="price1 font-w pb-2">{{mainData.sku&&mainData.sku[0]&&mainData.sku[0].o_price}}</text>/
+					<text class="priceV font-w">{{mainData.sku&&mainData.sku[0]&&mainData.sku[0].price}}</text>
 				</view>
-				<view class="font-22 color9">销量 255</view>
+				<view class="font-22 color9">销量 {{mainData.sale_count}}</view>
 			</view>
 		</view>
 		
@@ -31,10 +31,13 @@
 			</view>
 		</view>
 		
-		<view class="py-4 flex1 bg-white mb-2">
-			<view class="px-3 font-w">详情描述</view>
+		<view class="py-4 bg-white mb-2">
+			<view class="px-3 pb-3 font-w">详情描述</view>
 			<view>
-				<image src="../../static/images/goods details-img2.png" class="detailImg"></image>
+				<!-- <image src="../../static/images/goods details-img2.png" class="detailImg"></image> -->
+				<view class="content ql-editor px-3" v-html="mainData.content">
+					
+				</view>
 			</view>
 		</view>
 		
@@ -49,23 +52,23 @@
 				<view class="font-20 pt-1">购物车</view>
 			</view>
 			<view class="flex1 btnBox font-w colorf">
-				<view class="btn">加入购物车</view>
-				<view class="btn">立即购买</view>
+				<view class="btn" @click="ggShow">加入购物车</view>
+				<view class="btn" @click="ggShow">立即购买</view>
 			</view>
 		</view>
 		
 		
 		<!-- 规格 -->
 		<view class="bg-mask line-h" v-show="gg_show">
-			<view class="radius20-T bg-white p-a bottom-0 left-0 right-0 pt-3 d-flex flex-column ggBox">
+			<view class="radius20-T bg-white p-a bottom-0 left-0 right-0 pt-3 d-flex flex-column ggBox" >
 				<view class="flex a-end pb-3 px-3">
-					<view class="gg"><image src="../../static/images/goods details-img.png"></image></view>
+					<view class="gg"><image :src="skuData[skuCurr]&&skuData[skuCurr].mainImg&&skuData[skuCurr].mainImg[0]&&skuData[skuCurr].mainImg[0].url"></image></view>
 					<view class="pl-2 flex-1">
 						<view class="font-32 pb-3 colorR">
-							<text class="price1 font-w pb-2">78.8</text>/
-							<text class="priceV font-w">68.8</text>
+							<text class="price1 font-w pb-2">{{skuData[skuCurr]&&skuData[skuCurr].o_price}}</text>/
+							<text class="priceV font-w">{{skuData[skuCurr]&&skuData[skuCurr].price}}</text>
 						</view>
-						<view class="font-24 color9">请选择规格</view>
+						<view class="font-24 color9">{{skuData[skuCurr]&&skuData[skuCurr].title}}</view>
 					</view>
 					<view @click="ggShow">
 						<image src="../../static/images/goods details-icon3.png" class="x-icon"></image>
@@ -74,27 +77,25 @@
 				
 				<view class="flex-1 flexY flex-column mb-3 px-3 ggPartBox">
 					<view class="ggPart pb-1">
-						<view class="py-3 font-w">颜色</view>
+						<view class="py-3 font-w">规格</view>
 						<view class="font-24 color6">
-							<view class="span on">土豪金</view>
-							<view class="span">白色</view>
-							<view class="span">黑色</view>
-							<view class="span">太空银色</view>
+							<view class="span" v-for="(item,index) in mainData.sku" :key="index"
+							:class="skuCurr==index?'on':''" @click="changeSku(index)">{{item.title}}</view>
 						</view>
 					</view>
 					<view class="ggPart pb-1 flex1">
 						<view class="py-3 font-w">购买数量</view>
 						<view class="d-flex a-center count">
-							<image src="../../static/images/shopping-icon2.png" class="count-icon1"></image>
-							<view class="num text-center f5bj">1</view>
-							<image src="../../static/images/shopping-icon3.png" class="count-icon2"></image>
+							<image src="../../static/images/shopping-icon2.png" class="count-icon1" @click="count(-1)"></image>
+							<view class="num text-center f5bj">{{num}}</view>
+							<image src="../../static/images/shopping-icon3.png" class="count-icon2" @click="count(1)"></image>
 						</view>
 					</view>
 				</view>
 				
 				<view class="font-30 colorf text-center flex1 bT-e1 px-3 p-a left-0 right-0 bottom-0">
-					<view class="ggBtn">加入购物车</view>
-					<view class="ggBtn" @click="Router.navigateTo({route:{path:'/pages/shop-order/shop-order'}})">立即购买</view>
+					<view class="ggBtn" @click="addCar(mainData.sku[skuCurr])">加入购物车</view>
+					<view class="ggBtn" @click="goBuy(mainData.sku[skuCurr])">立即购买</view>
 				</view>
 			</view>
 		</view>
@@ -109,19 +110,78 @@
 		data() {
 			return {
 				Router:this.$Router,
-				gg_show:false
+				gg_show:false,
+				mainData:{},
+				skuData:{},
+				skuCurr:0,
+				num:1
 			}
 		},
+		onLoad(){
+			const self = this;
+			self.mainData = uni.getStorageSync('productDetail');
+			self.skuData = self.$Utils.cloneForm(self.mainData.sku);
+			console.log('main',self.mainData)
+		},
 		methods: {
+			
 			ggShow(){
 				const self = this;
 				self.gg_show = !self.gg_show
+			},
+			
+			changeSku(index){
+				const self = this;
+				self.skuCurr = index;
+			},
+			
+			count(i){
+				const self = this;
+				if(self.num+i > 0){
+					self.num += i;
+				}
+			},
+			
+			addCar(sku){
+				const self = this;
+				var data = self.$Utils.cloneForm(self.mainData);
+				data.sku = sku;
+				data.num = self.num;
+				var carData = [];
+				if(uni.getStorageSync('carData')){
+					carData = uni.getStorageSync('carData');
+					for(var i=0;i<carData.length;i++){
+						if(data.id == carData[i].id && data.sku.id == carData[i].sku.id){
+							self.$Utils.showToast('商品已存在购物车','none')
+							return
+						}else{
+							carData.push(data)
+							uni.setStorageSync('carData',carData)
+						}
+					}
+				}else{
+					carData.push(data)
+					uni.setStorageSync('carData',carData)
+					self.$Utils.showToast('已加入购物车','none')
+				}
+				self.gg_show = !self.gg_show
+			},
+			
+			goBuy(sku){
+				const self = this;
+				var data = self.$Utils.cloneForm(self.mainData);
+				data.sku = sku;
+				data.num = self.num;
+				var buyOrder = data;
+				uni.setStorageSync('buyOrder',buyOrder)
+				self.Router.navigateTo({route:{path:'/pages/shop-order/shop-order'}})
 			}
+			
 		}
 	}
 </script>
 <style>
-	page{background-color: #f5f5f5;}
+page{background-color: #f5f5f5;}
 </style>
 <style scoped>
 .banner .swiper-box{width: 750rpx;height: 750rpx;}

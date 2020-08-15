@@ -32,13 +32,13 @@
 		
 		
 		<view>
-			<view class="hot m-3 shadowM radius10 overflow-h font-24 p-r bg-white" @click="isShow">
-				<!-- <view class="hot-mask"></view> -->
+			<!-- 置顶 -->
+			<view class="hot m-3 shadowM radius10 overflow-h font-24 p-r bg-white" @click="isShow(topData.id)">
 				<image src="../../static/images/product-icon11.png" class="hotBg"></image>
 				<view class="colorf d-flex px-2 p-r py-4 borderDB">
 					<view class="font-22 zdSgin">置顶</view>
-					<view class="font-32 color2 pl-1 tit">恒辉-嘉润7号集合资金信托计划（第3期F类）</view>
-					<view class="qySgin">工商企业</view>
+					<view class="font-32 color2 pl-1 tit">{{topData.title}}</view>
+					<view class="qySgin">{{topData.label[topData.menu_id].title}}</view>
 				</view>
 				<view class="flex3 pt-5 px-2 pb-4">
 					<view class="flex4">
@@ -46,32 +46,31 @@
 							<image src="../../static/images/product-icon5.png" class="yq-icon"></image>
 							<view>预期收益最高可达</view>
 						</view>
-						<view class="colorR font-50 font-w">8.4%</view>
+						<view class="colorR font-50 font-w">{{topData.small_title}}</view>
 					</view>
 					<view class="flex4">
 						<view class="flex1 pb-2">
 							<image src="../../static/images/product-icon6.png" class="yq-icon1"></image>
 							<view>项目期限(月)</view>
 						</view>
-						<view class="font-40">28</view>
+						<view class="font-40">{{topData.keywords}}</view>
 					</view>
 					<view class="flex4">
 						<view class="flex1 pb-2">
 							<image src="../../static/images/product-icon7.png" class="yq-icon1"></image>
 							<view>起投金额(万)</view>
 						</view>
-						<view class="font-40">100</view>
+						<view class="font-40">{{topData.description}}</view>
 					</view>
 				</view>
 			</view>
-			
-			<view class="hot m-3 shadowM radius10 overflow-h font-24 p-r bg-white" @click="isShow">
-				<view class="hot-mask" v-show="navCurr!=0"></view>
+			<!-- 热门 -->
+			<view class="hot m-3 shadowM radius10 overflow-h font-24 p-r bg-white" @click="isShow(hotData.id)">
 				<image src="../../static/images/product-icon11.png" class="hotBg"></image>
 				<view class="colorf d-flex px-2 p-r py-4 borderDB">
 					<view class="font-22 hotSgin">热门</view>
-					<view class="font-32 color2 pl-1 tit">恒辉-嘉润7号集合资金信托计划（第3期F类）</view>
-					<view class="qySgin">工商企业</view>
+					<view class="font-32 color2 pl-1 tit">{{hotData.title}}</view>
+					<view class="qySgin">{{hotData.label[hotData.menu_id].title}}</view>
 				</view>
 				<view class="flex3 pt-5 px-2 pb-4">
 					<view class="flex4">
@@ -79,21 +78,54 @@
 							<image src="../../static/images/product-icon5.png" class="yq-icon"></image>
 							<view>预期收益最高可达</view>
 						</view>
-						<view class="colorR font-50 font-w">8.4%</view>
+						<view class="colorR font-50 font-w">{{hotData.small_title}}</view>
 					</view>
 					<view class="flex4">
 						<view class="flex1 pb-2">
 							<image src="../../static/images/product-icon6.png" class="yq-icon1"></image>
 							<view>项目期限(月)</view>
 						</view>
-						<view class="font-40">28</view>
+						<view class="font-40">{{hotData.keywords}}</view>
 					</view>
 					<view class="flex4">
 						<view class="flex1 pb-2">
 							<image src="../../static/images/product-icon7.png" class="yq-icon1"></image>
 							<view>起投金额(万)</view>
 						</view>
-						<view class="font-40">100</view>
+						<view class="font-40">{{hotData.description}}</view>
+					</view>
+				</view>
+			</view>
+			<!-- 其他 -->
+			<view class="hot m-3 shadowM radius10 overflow-h font-24 p-r bg-white" @click="isShow(item.id)"
+			v-for="(item,index) in mainData" :key="index">
+				<view class="hot-mask" v-show="navCurr!=0"></view>
+				<image src="../../static/images/product-icon11.png" class="hotBg"></image>
+				<view class="colorf d-flex px-2 p-r py-4 borderDB">
+					<view class="font-32 color2 pl-1 tit">{{item.title}}</view>
+					<view class="qySgin">{{item.label[item.menu_id].title}}</view>
+				</view>
+				<view class="flex3 pt-5 px-2 pb-4">
+					<view class="flex4">
+						<view class="flex1 pb-1">
+							<image src="../../static/images/product-icon5.png" class="yq-icon"></image>
+							<view>预期收益最高可达</view>
+						</view>
+						<view class="colorR font-50 font-w">{{item.small_title}}</view>
+					</view>
+					<view class="flex4">
+						<view class="flex1 pb-2">
+							<image src="../../static/images/product-icon6.png" class="yq-icon1"></image>
+							<view>项目期限(月)</view>
+						</view>
+						<view class="font-40">{{item.keywords}}</view>
+					</view>
+					<view class="flex4">
+						<view class="flex1 pb-2">
+							<image src="../../static/images/product-icon7.png" class="yq-icon1"></image>
+							<view>起投金额(万)</view>
+						</view>
+						<view class="font-40">{{item.description}}</view>
 					</view>
 				</view>
 			</view>
@@ -137,19 +169,81 @@
 		data() {
 			return {
 				navCurr:0,
-				is_show:false
+				is_show:false,
+				mainData:[],
+				topData:[],
+				hotData:[],
+				type:{
+				  tableName:'Label',
+				  searchItem:{
+						relation_two:'id'
+				  },
+				  fixSearchItem:{
+				    status:1,
+						relation_one_table:'Article',
+						relation_two_table:'Label',
+				  },
+				  key:'relation_one',
+				  middleKey:'id',
+				  condition:'=',
+				},
+				getBefore:{}
 			}
 		},
+		onLoad(){
+			const self = this;
+			self.$Utils.loadAll(['getMainData'], self);
+		},
 		methods: {
+			
 			changeNav(i){
 				const self = this;
-				self.navCurr = i
+				self.navCurr = i;
 			},
-			isShow(){
+			
+			isShow(id){
 				const self = this;
 				self.is_show = !self.is_show
+				self.$Router.navigateTo({route:{path:'/pages/detail/detail?type=2&id='+id}})
+			},
+			
+			getMainData() {
+				const self = this;
+				const postData = {};
+				// postData.tokenFuncName = 'getProjectToken';
+				// postData.getBefore = self.$Utils.cloneForm(self.getBefore);
+				postData.searchItem = {
+					type: 2,
+					thirdapp_id: 2
+				};
+				var callback = function(res){
+					if(res.info.data.length > 0){
+						var data = res.info.data;
+						for(var i=0;i<data.length;i++){
+							if(data[i].hot == 1){
+								var hot = [];
+								hot.push(data[i]);
+								self.hotData = hot[0]
+							}else if(data[i].top == 1){
+								var top = [];
+								top.push(data[i]);
+								self.topData = top[0]
+							}else if(data[i].top == 0&&data[i].hot == 0){
+								self.mainData.push(data[i])
+							}
+						}
+						// console.log('hot',self.hotData);
+						// console.log('top',self.topData);
+						// console.log('main',self.mainData);
+						// console.log('label',self.hotData.Label);
+					}
+					self.$Utils.finishFunc('getMainData');
+				}
+				self.$apis.articleGet(postData, callback);
 			}
-		}
+			
+		},
+		
 	}
 </script>
 

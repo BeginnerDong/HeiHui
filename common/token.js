@@ -45,9 +45,9 @@ class Token {
 	        };
 			console.log('getProjectToken',callback)
 			if(callback){
-				this.getUserInfo(params,callback);
+				this.getWeixinToken(params,callback);
 			}else{
-				this.getUserInfo(params);
+				this.getWeixinToken(params);
 			};    
 	    }else{
 	        return uni.getStorageSync('user_token');

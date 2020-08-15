@@ -2,30 +2,31 @@
 	<view>
 		
 		<view class="d-flex j-sb p-3 bB-f5">
-			<view>全部商品(2)</view>
+			<view>全部商品({{mainData.length}})</view>
 			<view @click="isShow">{{is_show?'管理':'完成'}}</view>
 		</view>
 		
 		
 		<view class="pb-5 mb-3">
-			<view class="p-3 bg-white mx-3 mb-2 radius10 d-flex flex-column a-end">
+			<view class="p-3 bg-white mx-3 mb-2 radius10 d-flex flex-column a-end"
+			v-for="(item,index) in mainData" :key="index">
 				<view class="d-flex a-center j-sb mb-2">
 					<image src="../../static/images/shopping-icon.png" class="shop-icon"></image>
 					<!-- <image src="../../static/images/shopping-icon1.png" class="shop-icon"></image> -->
-					<image src="../../static/images/shopping-img.png" class="shopImg mx-2"></image>
+					<image :src="item.mainImg[0].url" class="shopImg mx-2"></image>
 					<view class="shopCon d-flex flex-column flex-1">
-						<view class="tit avoidOverflow pb-2">哼唱幸福 11枝粉色扶郎花束</view>
-						<view class="font-22 color6 line-h flex-1">规格：礼盒A</view>
+						<view class="tit avoidOverflow pb-2">{{item.title}}</view>
+						<view class="font-22 color6 line-h flex-1">规格：{{item.sku.title}}</view>
 						<view class="colorR font-32">
-							<text class="price1 font-w pb-2">78.8</text>/
-							<text class="priceV font-w">68.8</text>
+							<text class="price1 font-w pb-2">{{item.sku.o_price}}</text>/
+							<text class="priceV font-w">{{item.sku.price}}</text>
 						</view>
 					</view>
 				</view>
 				<view class="d-flex a-center count">
-					<image src="../../static/images/shopping-icon2.png" class="count-icon1"></image>
-					<view class="num text-center f5bj">1</view>
-					<image src="../../static/images/shopping-icon3.png" class="count-icon2"></image>
+					<image src="../../static/images/shopping-icon2.png" class="count-icon1" @click="count(-1,index)"></image>
+					<view class="num text-center f5bj">{{item.num}}</view>
+					<image src="../../static/images/shopping-icon3.png" class="count-icon2" @click="count(1,index)"></image>
 				</view>
 			</view>
 		</view>
@@ -38,7 +39,7 @@
 					<image src="../../static/images/shopping-icon1.png" class="shop-icon"></image>
 					<view class="pl-1">全选</view>
 				</view>
-				<view class="font-22 d-flex a-center">合计 <text class="price font-30 font-w">79.8</text></view>
+				<view class="font-22 d-flex a-center">合计 <text class="price font-30 font-w">{{totle}}</text></view>
 			</view>
 			<view class="carBtn" @click="Router.navigateTo({route:{path:'/pages/shop-order/shop-order'}})">立即购买</view>
 		</view>
@@ -80,14 +81,44 @@
 		data() {
 			return {
 				Router:this.$Router,
-				is_show:true
+				is_show:true,
+				mainData:[],
+				totle:0
 			}
 		},
+		onLoad(){
+			const self = this;
+			self.mainData = uni.getStorageSync('carData');
+			self.totlePrice()
+		},
 		methods: {
+			
 			isShow(){
 				const self = this;
 				self.is_show = !self.is_show
+			},
+			
+			count(i,index){
+				const self = this;
+				if(self.mainData[index].num+i > 0){
+					self.mainData[index].num += i;
+					self.totlePrice()
+				}
+			},
+			
+			totlePrice(){
+				const self = this;
+				if(self.mainData){
+					self.totle = 0;
+					for(var i=0;i<self.mainData.length;i++){
+						var totle = self.mainData[i].num * parseFloat(self.mainData[i].sku.price)
+						self.totle = totle+self.totle
+						console.log(self.totle)
+					}
+				}
+				// self.totle = self.totle.toFixed(2);
 			}
+			
 		}
 	}
 </script>

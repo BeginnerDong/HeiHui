@@ -19,37 +19,10 @@
 		
 		<!-- 金刚区 -->
 		<view class="flex1 mx-3 font-24 bg-white mt-2 radius10 pb-4">
-			<view class="tt flex4 pt-4">
-				<image src="../../static/images/mall-img.png" ></image>
-				<view>精选谷物</view>
-			</view>
-			<view class="tt flex4 pt-4">
-				<image src="../../static/images/mall-img1.png" ></image>
-				<view>滋补山参</view>
-			</view>
-			<view class="tt flex4 pt-4">
-				<image src="../../static/images/mall-img2.png" ></image>
-				<view>精品山珍</view>
-			</view>
-			<view class="tt flex4 pt-4">
-				<image src="../../static/images/mall-img3.png" ></image>
-				<view>养生枸杞</view>
-			</view>
-			<view class="tt flex4 pt-4">
-				<image src="../../static/images/mall-img4.png" ></image>
-				<view>粮油米面</view>
-			</view>
-			<view class="tt flex4 pt-4">
-				<image src="../../static/images/mall-img5.png" ></image>
-				<view>就睡饮料</view>
-			</view>
-			<view class="tt flex4 pt-4">
-				<image src="../../static/images/mall-img6.png" ></image>
-				<view>精选茶叶</view>
-			</view>
-			<view class="tt flex4 pt-4">
-				<image src="../../static/images/mall-img7.png" ></image>
-				<view>坚果炒货</view>
+			<view class="tt flex4 pt-4" v-for="(item,index) in labelData" :key="index" v-show="index>0"
+			 @click="Router.navigateTo({route:{path:'/pages/shop-classify/shop-classify?id='+index}})">
+				<image :src="item.mainImg[0].url" ></image>
+				<view>{{item.title}}</view>
 			</view>
 		</view>
 		
@@ -60,17 +33,20 @@
 					<image src="../../static/images/mall-icon.png" class="mall-icon"></image>
 					<view>热门活动</view>
 				</view>
-				<view class="flex font-24 color9">
+				<view class="flex font-24 color9"
+				@click="Router.navigateTo({route:{path:'/pages/shop-classifyGood/shop-classifyGood?type=hot'}})">
 					<view>更多</view>
 					<image src="../../static/images/mall-icon3.png" class="R-icon"></image>
 				</view>
 			</view>
-			<view class="shopHot font-32 line-h flex1">
-				<view class="pb-3">
-					<image src="../../static/images/mall-img8.png" mode=""></image>
-					<view class="tit font-26 pt-2 pb-3 avoidOverflow">兰芝（LANZHI 52365）</view>
-					<view class="price1 font-w pb-2">78.8</view>
-					<view class="priceV font-w">68.8</view>
+			<view class="shopHot font-32 line-h flex">
+				<view class="pb-3 mr-2 hotGood" 
+				v-for="(item,index) in hotData" :key="index" 
+				v-show="index<3"  @click="goDetail(item)">
+					<image :src="item.mainImg[0].url" mode=""></image>
+					<view class="tit font-26 pt-2 pb-3 avoidOverflow">{{item.title}}</view>
+					<view class="price1 font-w pb-2">{{item.sku[0].o_price}}</view>
+					<view class="priceV font-w">{{item.sku[0].price}}</view>
 				</view>
 			</view>
 		</view>
@@ -82,18 +58,21 @@
 					<image src="../../static/images/mall-icon1.png" class="mall-icon"></image>
 					<view>精品推荐</view>
 				</view>
-				<view class="flex font-24 color9">
+				<view class="flex font-24 color9"
+				@click="Router.navigateTo({route:{path:'/pages/shop-classifyGood/shop-classifyGood?type=recommend'}})">
 					<view>更多</view>
 					<image src="../../static/images/mall-icon3.png" class="R-icon"></image>
 				</view>
 			</view>
 			<view class="shopJp font-32 line-h flex1">
-				<view class="pb-3">
-					<image src="../../static/images/mall-img9.png" mode=""></image>
-					<view class="tit font-26 pt-2 pb-3 avoidOverflow">43度飞天茅台 1.3L/瓶</view>
+				<view class="pb-3" 
+				v-for="(item,index) in recommendData" :key="index" 
+				v-show="index<2"  @click="goDetail(item)">
+					<image :src="item.mainImg[0].url" mode=""></image>
+					<view class="tit font-26 pt-2 pb-3 avoidOverflow">{{item.title}}</view>
 					<view class="colorR">
-						<text class="price1 font-w pb-2">78.8</text>/
-						<text class="priceV font-w">68.8</text>
+						<text class="price1 font-w pb-2">{{item.sku[0].o_price}}</text>/
+						<text class="priceV font-w">{{item.sku[0].price}}</text>
 					</view>
 				</view>
 			</view>
@@ -109,14 +88,15 @@
 			<view class="line100"></view>
 		</view>
 		<view class="flex1 px-3">
-			<view class="radius10 overflow-h pt-3 shopTj">
-				<image src="../../static/images/mall-img10.png" mode=""></image>
+			<view class="radius10 overflow-h pt-3 shopTj" 
+			v-for="(item,index) in mainData" :key="index" @click="goDetail(item)">
+				<image :src="item.mainImg[0].url" mode=""></image>
 				<view class="bg-white p-2">
-					<view class="tit avoidOverflow2 font-26">乔府大院五常核心产区留胚鲜米品鉴装</view>
-					<view class="font-20 color9 line-h py-2">销量 235</view>
+					<view class="tit avoidOverflow2 font-26">{{item.title}}</view>
+					<view class="font-20 color9 line-h py-2">销量 {{item.sale_count}}</view>
 					<view class="colorR font-32">
-						<text class="price1 font-w pb-2">78.8</text>/
-						<text class="priceV font-w">68.8</text>
+						<text class="price1 font-w pb-2">{{item.sku[0].o_price}}</text>/
+						<text class="priceV font-w">{{item.sku[0].price}}</text>
 					</view>
 				</view>
 			</view>
@@ -153,10 +133,94 @@
 	export default {
 		data() {
 			return {
-				Router:this.$Router
+				Router:this.$Router,
+				labelData:[],
+				mainData:[],
+				recommendData:[],
+				hotData:[],
+				searchItem:{
+					thirdapp_id: 2,
+					type: 1
+				},
+				isLoadAll:false
 			}
 		},
+		onLoad(){
+			const self = this;
+			self.paginate = self.$Utils.cloneForm(self.$AssetsConfig.paginate);
+			self.$Utils.loadAll(['getLabelData','getMainData'], self);
+		},
+		onReachBottom() {
+			const self = this;
+			if (!self.isLoadAll && uni.getStorageSync('loadAllArray')) {
+				self.paginate.currentPage++;
+				self.getMainData()
+			};
+		},
 		methods: {
+			
+			goDetail(item){
+				const self = this;
+				uni.setStorageSync('productDetail',item)
+				self.Router.navigateTo({route:{path:'/pages/shop-detail/shop-detail'}})
+			},
+			
+			getLabelData() {
+				const self = this;
+				const postData = {};
+				postData.searchItem = {
+					type: 3
+				}
+				postData.order = {
+					listorder:'asc'
+				}
+				var callback = function(res){
+					if(res.info.data.length > 0){
+						self.labelData = res.info.data;
+					}
+					console.log('label',self.labelData);
+					self.$Utils.finishFunc('getLabelData');
+				}
+				self.$apis.labelGet(postData, callback);
+			},
+			
+			getMainData(isNew) {
+				const self = this;
+				if (isNew) {
+					self.mainData = [];
+					self.paginate = self.$Utils.cloneForm(self.paginate);
+				};
+				const postData = {};
+				postData.searchItem = self.$Utils.cloneForm(self.searchItem);
+				postData.paginate = self.$Utils.cloneForm(self.paginate);
+				postData.getAfter = {
+					sku:{
+						tableName:'Sku',
+						middleKey:'product_no',
+						key:'product_no',
+						searchItem:{
+							status:1
+						},
+						condition:'='
+					}
+				}
+				var callback = function(res){
+					if(res.info.data.length > 0){
+						for(var i=0;i<res.info.data.length;i++){
+							if(res.info.data[i].recommend==1){
+								self.recommendData.push(res.info.data[i])
+							}
+							if(res.info.data[i].hot == 1){
+								self.hotData.push(res.info.data[i])
+							}
+							self.mainData.push(res.info.data[i])
+						}
+						console.log('main',self.mainData);
+					}
+					self.$Utils.finishFunc('getMainData');
+				}
+				self.$apis.productGet(postData, callback);
+			}
 			
 		}
 	}
@@ -171,12 +235,13 @@ page{background-color: #f5f5f5;}
 .tt image{width: 90rpx;height: 90rpx;margin-bottom: 20rpx}
 
 .mall-icon{width: 44rpx;height: 43rpx;margin-right: 10rpx;}
-.shopHot image{width: 190rpx;height: 190rpx;}
+.shopHot image{width: 190rpx;height: 190rpx;border-radius: 10rpx;}
 .shopHot .tit{width: 190rpx;}
-.shopJp image{width: 300rpx;height: 200rpx;}
+.hotGood:nth-child(3){margin: 0;}
+.shopJp image{width: 300rpx;height: 200rpx;border-radius: 10rpx 10rpx 0 0;}
 .shopJp .tit{width: 300rpx;}
 .line100{width: 100rpx;border-top: 1px solid #e1e1e1;}
 .shopTj{width: 330rpx;}
-.shopTj image{width: 100%;height: 300rpx;}
-.shopTj .tit{width: 290rpx;}
+.shopTj image{width: 100%;height: 300rpx;border-radius: 10rpx 10rpx 0 0;}
+.shopTj .tit{width: 290rpx;height: 70rpx;}
 </style>

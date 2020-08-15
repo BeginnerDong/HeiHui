@@ -11,7 +11,9 @@
 				<image src="../../static/images/jianjie-icon1.png" class="jj-icon"></image>
 			</view>
 			<view class="mx-3 p-3 mt-3 p-r shadowM radius10 txt">
-				公司全称 深圳前海恒辉资产管理有限公司 英文名称 Shenzhen Qianhai Eternal Glory As... 壹财富是国内领先的金融科技财富管理平台,云集信托资管、私募基金、海外资产等优质...<br /><br />公司全称 深圳前海恒辉资产管理有限公司 英文名称 Shenzhen Qianhai Eternal Glory As... 壹财富是国内领先的金融科技财富管理平台,云集信托资管、私募基金、海外资产等优质...
+				<view class="content ql-editor" style="padding:0;" v-html="mainData.content">
+					
+				</view>
 			</view>
 		</view>
 		
@@ -23,8 +25,10 @@
 				<image src="../../static/images/jianjie-icon1.png" class="jj-icon"></image>
 			</view>
 			<view class="mx-3 p-3 mt-3 p-r shadowM radius10 txt">
-				公司全称 深圳前海恒辉资产管理有限公司 英文名称 Shenzhen Qianhai Eternal Glory As... 壹财富是国内领先的金融科技财富管理平台,云集信托资管、私募基金、海外资产等优质...<br /><br />公司全称 深圳前海恒辉资产管理有限公司 英文名称 Shenzhen Qianhai Eternal Glory As... 壹财富是国内领先的金融科技财富管理平台,云集信托资管、私募基金、海外资产等优质...
-				<image src="../../static/images/jianjie-img1.png" class="img1"></image>
+				<view class="content ql-editor" style="padding:0;" v-html="mainData.passage1">
+					
+				</view>
+				<!-- <image src="../../static/images/jianjie-img1.png" class="img1"></image> -->
 			</view>
 		</view>
 		
@@ -34,8 +38,8 @@
 				<view class="color2 font-44 font-w text-center px-2">合作伙伴</view>
 				<image src="../../static/images/jianjie-icon1.png" class="jj-icon"></image>
 			</view>
-			<view class="mx-3 p-3 mt-3 p-r shadowM radius10 flex1">
-				<image src="../../static/images/jianjie-img3.png" class="img2"></image>
+			<view class="mx-3 p-3 mt-3 p-r shadowM radius10 flex flex-wrap">
+				<image v-for="(item,index) in mainData.bannerImg" :src="item.url" class="img2"></image>
 			</view>
 		</view>
 		
@@ -48,17 +52,17 @@
 			<view class="mx-3 p-3 mt-3 p-r shadowM radius10 contact">
 				<view class="flex bB-f5 py-2">
 					<image src="../../static/images/jianjie-icon4.png" class="con-icon"></image>
-					<input type="text" value="" placeholder="姓名" />
+					<input type="text" v-model="submitData.title" placeholder="姓名" />
 				</view>
 				<view class="flex bB-f5 py-2 mt-3">
 					<image src="../../static/images/jianjie-icon3.png" class="con-icon1"></image>
-					<input type="text" value="" placeholder="手机号" />
+					<input type="text" v-model="submitData.phone" placeholder="手机号" />
 				</view>
 				<view class="flex bB-f5 py-2 mt-3">
 					<image src="../../static/images/jianjie-icon2.png" class="con-icon2"></image>
-					<input type="text" value="" placeholder="留言框" />
+					<input type="text" v-model="submitData.content" placeholder="留言框" />
 				</view>
-				<view class="btn600">确定</view>
+				<view class="btn600" @click="successSubmit">确定</view>
 			</view>
 		</view>
 		
@@ -71,10 +75,80 @@
 	export default {
 		data() {
 			return {
-				
+				mainData:{},
+				submitData:{
+					title:'',
+					phone:'',
+					content:''
+				}
 			}
 		},
+		onLoad(){
+			const self = this;
+			self.$Utils.loadAll(['getMainData'], self);
+		},
 		methods: {
+			
+			successSubmit(){
+				const self = this;
+				if(self.submitData.title == ''){
+					self.$Utils.showToast('请输入姓名','none')
+				}else if(self.submitData.phone == ''){
+					self.$Utils.showToast('请输入电话号码','none')
+				}else if(self.submitData.content == ''){
+					self.$Utils.showToast('请输入内容','none')
+				}else{
+					var reg = /^1[3456789]\d{9}$/
+					if(reg.test(self.submitData.phone)){
+						self.submit()
+					}else{
+						self.$Utils.showToast('电话号码格式错误','none')
+					}
+				}
+			},
+			
+			submit(){
+				const self = this;
+				const postData = {
+					data:self.submitData
+				};
+				postData.tokenFuncName = 'getProjectToken';
+				const callback = (res) => {
+					
+					uni.setStorageSync('canClick', true);
+					if (res.solely_code == 100000) {
+						uni.showToast({
+						    title: '提交成功',
+						    duration: 2000,
+						});
+						setTimeout(function(){
+							self.submitData.title = '';
+							self.submitData.phone = '';
+							self.submitData.content = '';
+						},2000)
+					} else {
+						self.$Utils.showToast(res, 'none')
+					}
+				};
+				self.$apis.messageAdd(postData, callback);
+			},
+			
+			getMainData() {
+				const self = this;
+				const postData = {};
+				// postData.tokenFuncName = 'getProjectToken';
+				postData.searchItem = {
+					menu_id: 1,
+					thirdapp_id: 2
+				};
+				var callback = function(res){
+					if(res.info.data.length > 0){
+						self.mainData = res.info.data[0];
+					}
+					self.$Utils.finishFunc('getMainData');
+				}
+				self.$apis.articleGet(postData, callback);
+			}
 			
 		}
 	}
@@ -85,7 +159,8 @@
 .bg-txt{width: 690rpx;height: 468rpx;position: absolute;top: 70rpx;;left: 0;right: 0;margin: 0 auto;}
 .item{margin-bottom: 30rpx;}
 .img1{width: 600rpx;height: 340rpx;margin: 30rpx auto 0;}
-.img2{width: 200rpx;height: 130rpx;margin-bottom: 20rpx;}
+.img2{width: 200rpx;height: 130rpx;margin-bottom: 20rpx;margin-right: 19rpx;}
+.img2:nth-child(3n){margin-right: 0;}
 .img3{width: 100%;height: 200rpx;margin-top: 100rpx;}
 .con-icon{width: 26rpx;height: 30rpx;}
 .con-icon1{width: 23rpx;height: 30rpx;}

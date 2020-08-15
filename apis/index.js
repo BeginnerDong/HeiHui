@@ -188,6 +188,7 @@ export default {
 		};
 		http.HTTP(allParams);
 	},
+	
 	userUpdate(param, callback) {
 		var allParams = {
 			url: 'Base/User/update',
@@ -393,6 +394,18 @@ export default {
 	addressAdd(param, callback) {
 		var allParams = {
 			url: 'Common/UserAddress/add',
+			type: 'post',
+			data: param,
+			sCallback: function(data) {
+				callback && callback(data);
+			}
+		};
+		http.HTTP(allParams);
+	},
+	
+	messageAdd(param, callback) {
+		var allParams = {
+			url: 'Common/Message/add',
 			type: 'post',
 			data: param,
 			sCallback: function(data) {

@@ -22,5 +22,6 @@
 	@import "/common/css/common.css";
 	/* 公共样式 */
 	@import "/common/css/main.css";
-	html{height: auto;}
+	/* html{height: auto;} */
+	/* body{background-color: #fff!important;} */
 </style>

@@ -25,7 +25,7 @@
 		</view>
 		
 		<view class="btn690 Mgb colorf">确定</view>
-		<view class="btn690 f5bj">删除地址</view>
+		<view class="btn690 f5bj" v-show="type">删除地址</view>
 	</view>
 </template>
 
@@ -33,7 +33,14 @@
 	export default {
 		data() {
 			return {
-				Router:this.$Router
+				Router:this.$Router,
+				type:''
+			}
+		},
+		onLoad(options){
+			const self = this;
+			if(options.type){
+				self.type = options.type
 			}
 		},
 		methods: {

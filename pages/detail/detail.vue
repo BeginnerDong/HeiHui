@@ -1,11 +1,11 @@
 <template>
 	<view class="px-3">
 		
-		<view class="font-36 pt-3">减持猛如虎！大股东突然出手 凶猛套现吓坏科技巨头股价大跌！</view>
+		<view class="font-36 pt-3">{{mainData.title}}</view>
 		<view class="font-24 color6 flex1 mt-1 pb-4 bB-e1">
 			<view class="flex">
 				<image src="../../static/images/details-icon.png" class="time-icon"></image>
-				<view>2020-06-23</view>
+				<view>{{mainData.create_time}}</view>
 			</view>
 			<view class="flex">
 				<image src="../../static/images/details-icon2.png" class="sc-icon"></image>
@@ -14,10 +14,11 @@
 		</view>
 		
 		<view class="pt-3">
-			<video src="" controls></video>
+			<video :src="mainData&&mainData.bannerImg&&mainData.bannerImg[0]&&mainData.bannerImg[0].url" controls></video>
 			<view class="pt-3 font-26">
-				LPR本月未变动有着多方面的原因，单月的结果不改变利率整体下行的趋势。<br /><br />
-				LPR本月未变动有着多方面的原因，单月的结果不改变利率整体下行的趋势。事实上，自去年三季度LPR改革以来，LPR每季度依次下降了11bp、5bp、10bp，而今年二季度已下降了20bp。不少分析认为，推动实体经济综合、融资成本明显下行依然是当前宏观政策的主要着力点，预计后续央行仍有降息降准空间，三季度LPR依然会继续下降。
+				<view class="content ql-editor" style="padding:0;" v-html="mainData.content">
+					
+				</view>
 			</view>
 		</view>
 		
@@ -28,10 +29,40 @@
 	export default {
 		data() {
 			return {
-				
+				mainData:{},
+				searchItem:{
+					thirdapp_id: 2
+				}
 			}
 		},
+		onLoad(option){
+			const self = this;
+			self.searchItem.id = option.id;
+			self.searchItem.type = option.type;
+			self.searchItem.menu_id = option.menu_id;
+			console.log('option',option)
+			self.$Utils.loadAll(['getMainData'], self);
+		},
 		methods: {
+			
+			getMainData(isNew,id) {
+				const self = this;
+				if (isNew) {
+					self.topData = [];
+					self.mainData = [];
+				};
+				const postData = {};
+				postData.searchItem = self.$Utils.cloneForm(self.searchItem);
+				var callback = function(res){
+					if(res.info.data.length > 0){
+						self.mainData = res.info.data[0];
+						self.mainData.create_time = self.$Utils.timeto(parseInt(self.mainData.create_time),'ymd');
+						console.log('main',self.mainData);
+					}
+					self.$Utils.finishFunc('getMainData');
+				}
+				self.$apis.articleGet(postData, callback);
+			}
 			
 		}
 	}

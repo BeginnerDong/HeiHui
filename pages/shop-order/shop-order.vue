@@ -16,13 +16,13 @@
 		<view >
 			<view class="bg-white px-2 radius10">
 				<view class="d-flex a-center j-sb py-3 bB-f5">
-					<image src="../../static/images/my order-img.png" class="shopImg"></image>
+					<image :src="mainData.sku.mainImg[0].url" class="shopImg"></image>
 					<view class="shopCon d-flex flex-column flex-1 pl-2">
-						<view class="tit avoidOverflow2 pb-2">哼唱幸福 11枝粉色扶郎花束</view>
-						<view class="font-22 color6 line-h flex-1">规格：礼盒A</view>
+						<view class="tit avoidOverflow2 pb-2 flex-1">{{mainData.title}}</view>
+						<view class="font-22 color6 line-h pb-1">规格：{{mainData.sku.title}}</view>
 						<view class="colorR font-32">
-							<text class="price1 font-w pb-2">78.8</text>/
-							<text class="priceV font-w">68.8</text>
+							<text class="price1 font-w pb-2">{{mainData.sku.o_price}}</text>/
+							<text class="priceV font-w">{{mainData.sku.price}}</text>
 						</view>
 					</view>
 				</view>
@@ -34,16 +34,16 @@
 			<view class="ggPart pb-1 flex1 px-2">
 				<view class="py-3">购买数量</view>
 				<view class="d-flex a-center count">
-					<image src="../../static/images/shopping-icon2.png" class="count-icon1"></image>
-					<view class="num text-center f5bj">1</view>
-					<image src="../../static/images/shopping-icon3.png" class="count-icon2"></image>
+					<image src="../../static/images/shopping-icon2.png" class="count-icon1" @click="count(-1)"></image>
+					<view class="num text-center f5bj">{{mainData.num}}</view>
+					<image src="../../static/images/shopping-icon3.png" class="count-icon2" @click="count(1)"></image>
 				</view>
 			</view>
 		</view>
 		
 		
 		<view class="bg-white p-f left-0 right-0 d-flex carBot">
-			<view class="font-22 d-flex a-center flex-1 px-3">总计： <text class="price1 font-30 font-w">79.8</text></view>
+			<view class="font-22 d-flex a-center flex-1 px-3">总计： <text class="price1 font-30 font-w">{{totle}}</text></view>
 			<view class="carBtn" @click="showToast">提交订单</view>
 		</view>
 		
@@ -69,18 +69,48 @@
 		data() {
 			return {
 				Router:this.$Router,
-				is_show:false
+				is_show:false,
+				mainData:{},
+				totle:0
 			}
 		},
+		onLoad(){
+			const self = this;
+			self.mainData = uni.getStorageSync('buyOrder')
+			console.log('buy',self.mainData)
+			self.totlePrice()
+		},
+		onShow(){
+			const self = this;
+		},
 		methods: {
+			
 			showToast(){
 				const self = this;
 				self.is_show = !self.is_show
+			},
+			
+			count(i){
+				const self = this;
+				if(self.mainData.num+i > 0){
+					self.mainData.num += i;
+				}
+				self.totlePrice();
+			},
+			
+			totlePrice(){
+				const self = this;
+				if(self.mainData){
+					self.totle = self.mainData.num * Number(self.mainData.sku.price)
+				}
+				console.log('totle',self.totle)
 			}
+			
 		}
 	}
 </script>
 <style>
+html,body{height: 100%!important;background-color: #f5f5f5;}
 page{background-color: #f5f5f5;}
 </style>
 <style scoped>

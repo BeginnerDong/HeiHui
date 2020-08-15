@@ -1,7 +1,7 @@
 <template>
 	<view>
 		<view>
-			<image src="../../static/images/about-img.png" class="appoinImg"></image>
+			<image :src="nowData&&nowData.mainImg&&nowData.mainImg[0]&&nowData.mainImg[0].url" class="appoinImg"></image>
 		</view>
 		
 		<view class="flex py-2 px-3">
@@ -9,21 +9,16 @@
 			<view class="font-32 font-w">视频预告</view>
 		</view>
 		<view class="flex px-3">
-			<image src="../../static/images/family-img1.png" class="spImg"></image>
-			<view class="line-h pl-2 flex-1 spTxt">
-				<view class="pb-4 avoidOverflow">主题：艺术珠宝鉴赏与投资</view>
-				<view class="pb-4">时间：2020-07-03 20:00</view>
-				<view>专家：宋彩亚</view>
+			<video :src="nowData&&nowData.bannerImg&&nowData.bannerImg[0]&&nowData.bannerImg[0].url" class="spImg" controls=""></video>
+			<view class="pl-2 flex-1 flex5 spTxt">
+				<view class="avoidOverflow2 flex-1">主题：{{nowData.title}}</view>
+				<view class="pb-1">时间：2020-07-03 20:00</view>
+				<view>专家：{{nowData.small_title}}</view>
 			</view>
 		</view>
-		<view class="font-24 px-3">
-			<view class="pt-3 pb-2">主讲人：宋彩亚</view>
-			<view class="color6">
-				他(她)在北京国创庆业管理咨询有限公司、天津国略企业管理咨询合伙企业（有限合伙）、天津当科企业管理咨询合伙企业（有限合伙）等担任法人，他(她)在北京国创庆业管理咨询有限公司、天津国略企业管理咨询合伙企业
-			</view>
-			<view class="pt-3 pb-2">对讲嘉宾：宋彩亚</view>
-			<view class="color6">
-				他(她)在北京国创庆业管理咨询有限公司、天津国略企业管理咨询合伙企业（有限合伙）、天津当科企业管理咨询合伙企业（有限合伙）等担任法人，他(她)在北京国创庆业管理咨询有限公司、天津国略企业管理咨询合伙企业
+		<view class="font-24 px-3 pt-3">
+			<view class="content ql-editor" style="padding:0;" v-html="nowData.content">
+				
 			</view>
 		</view>
 		
@@ -32,30 +27,32 @@
 			<view class="font-32 font-w">往期视频回放</view>
 		</view>
 		<view class="font-24 line-h flex2 pb-4">
-			<view class="flex4" @click="changeLi(0)">
+			<view class="flex4" @click="changeLi(0,labelData[0].id)">
 				<image src="../../static/images/baike-icon3.png" class="app-icon1" v-show="liCurr!=0"></image>
 				<image src="../../static/images/baike-icon4.png" class="app-icon1" v-show="liCurr==0"></image>
 				<view>资产配置</view>
 			</view>
-			<view class="flex4" @click="changeLi(1)">
+			<view class="flex4" @click="changeLi(1,labelData[1].id)">
 				<image src="../../static/images/baike-icon2.png" class="app-icon1" v-show="liCurr!=1"></image>
 				<image src="../../static/images/baike-icon5.png" class="app-icon1" v-show="liCurr==1"></image>
 				<view>家族财富管理</view>
 			</view>
-			<view class="flex4" @click="changeLi(2)">
+			<view class="flex4" @click="changeLi(2,labelData[2].id)">
 				<image src="../../static/images/baike-icon1.png" class="app-icon1" v-show="liCurr!=2"></image>
 				<image src="../../static/images/baike-icon6.png" class="app-icon1" v-show="liCurr==2"></image>
 				<view>其他</view>
 			</view>
 		</view>
 		
-		<view class="flex1 mx-3 pb-3 p-r" @click="isShow">
-			<image src="../../static/images/about-img1.png" class="spImg"></image>
-			<view class="pl-2 wqTxt">
-				<view class="font-30 font-w avoidOverflow2">中国医药行业发展透视与未来与发展</view>
-				<view class="font-26 pt-3 avoidOverflow2">简介：他(她)在北京国创庆业管理咨询有限公司、天津国略企业管理咨询合伙企业（有限合伙）、天津当科企业管理咨询合伙企业（有限合伙）等</view>
+		<view class="flex1 mx-3 pb-3 p-r"
+		v-for="(item,index) in mainData" :key="index"
+		@click="goDetail(item)">
+			<image :src="item.mainImg[0].url" class="spImg"></image>
+			<view class="pl-2 py-1 flex5 wqTxt">
+				<view class="font-30 font-w avoidOverflow2">{{item.title}}</view>
+				<view class="font-26 pt-3 avoidOverflow2">简介：{{item.description}}</view>
 			</view>
-			<view class="font-22 p-1 Mgb colorf line-h p-a top-0 left-0">专家 | 唐心</view>
+			<view class="font-22 p-1 Mgb colorf line-h p-a top-0 left-0">专家 | {{item.small_title}}</view>
 		</view>
 		
 		
@@ -67,7 +64,7 @@
 				<view class="py-5">
 					<input type="text" value="" placeholder="姓名" />
 					<input type="text" value="" placeholder="密码" />
-					<view class="btn600" @click="Router.navigateTo({route:{path:'/pages/appointmentDetail/appointmentDetail'}})">进入</view>
+					<view class="btn600" >进入</view>
 				</view>
 			</view>
 		</view>
@@ -81,18 +78,85 @@
 			return {
 				Router:this.$Router,
 				liCurr:0,
-				is_show:false
+				is_show:false,
+				nowData:{},
+				mainData:[],
+				searchItem:{
+					type: 6,
+					thirdapp_id: 2
+				},
+				labelData:[]
 			}
 		},
+		onLoad(){
+			const self = this;
+			self.$Utils.loadAll(['getLabelData'], self);
+		},
 		methods: {
-			changeLi(i){
+			
+			goDetail(item){
+				const self = this;
+				uni.setStorageSync('appointmentData',item)
+				self.Router.navigateTo({route:{path:'/pages/appointmentDetail/appointmentDetail'}})
+			},
+			
+			changeLi(i,id){
 				const self = this;
 				self.liCurr = i;
+				self.getMainData(true,id);
 			},
+			
 			isShow(){
 				const self = this;
 				self.is_show = !self.is_show
+			},
+			
+			getLabelData() {
+				const self = this;
+				const postData = {};
+				postData.searchItem = {
+					parentid : 9
+				}
+				var callback = function(res){
+					if(res.info.data.length > 0){
+						self.labelData =  res.info.data;
+					}
+					console.log('label',self.labelData);
+					// self.searchItem.menu_id = self.labelData[0].id;
+					self.getMainData(true,self.labelData[0].id);
+					self.$Utils.finishFunc('getLabelData');
+				}
+				self.$apis.labelGet(postData, callback);
+			},
+			
+			getMainData(isNew,id) {
+				const self = this;
+				if (isNew) {
+					self.nowData = [];
+					self.mainData = [];
+				};
+				const postData = {};
+				postData.searchItem = self.$Utils.cloneForm(self.searchItem);
+				var callback = function(res){
+					if(res.info.data.length > 0){
+						var data = res.info.data;
+						console.log('data',data)
+						for(var i=0;i<data.length;i++){
+							data[i].create_time = data[i].create_time.substring(0,16);
+							if(data[i].top == 1){
+								self.nowData = data[i]
+							}else if(data[i].top == 0 &&  data[i].menu_id == id){
+								self.mainData.push(data[i])
+							}
+						}
+						console.log('top',self.nowData);
+						console.log('main',self.mainData);
+					}
+					self.$Utils.finishFunc('getMainData');
+				}
+				self.$apis.articleGet(postData, callback);
 			}
+			
 		}
 	}
 </script>
@@ -102,8 +166,10 @@
 .app-icon{width: 30rpx;height: 31rpx;margin-right: 10rpx;}
 .app-icon1{width: 110rpx;height: 110rpx;margin-bottom: 30rpx;}
 .spImg{width: 260rpx;height: 180rpx;}
+.spTxt{height: 180rpx;}
 .spTxt view{width: 410rpx;}
 .wqTxt view{width: 408rpx;}
+.wqTxt{height: 180rpx;}
 
 .tcBox{margin-top: 40%;overflow: hidden;}
 .tcBox .tit{line-height: 80rpx;}

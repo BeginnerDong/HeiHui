@@ -1,39 +1,22 @@
 <template>
 	<view>
 		
-		<view class="flex3 pt-1">
+		<view class="flex3 pt-1" v-for="(item,index) in timeData" :key="index">
 			<view class="pt-3 p-r newDate">
 				<image src="../../static/images/new-icon.png" class="new-icon"></image>
 				<view class="colorf p-a top-0 left-0 right-0 w-100 text-center">
-					<view class="font-32 pt-4">12</view>
-					<view class="font-20">2020/05</view>
+					<view class="font-32 pt-4">{{item[2]}}</view>
+					<view class="font-20">{{item[0]}}/{{item[1]}}</view>
 				</view>
 			</view>
 			<view class="px-3">
-				<view class="newCon py-3 bB-e1" @click="Router.navigateTo({route:{path:'/pages/detail/detail'}})">
-					<view class="font-32 tit avoidOverflow2">"破局希望"-中国医药行业发展透视与未来展望</view>
-					<image src="../../static/images/new-img.png" class="newImg"></image>
-				</view>
-				<view class="newCon py-3 bB-e1">
-					<view class="font-32 tit avoidOverflow2">"破局希望"-中国医药行业发展透视与未来展望</view>
-					<image src="../../static/images/new-img.png" class="newImg"></image>
-				</view>
-			</view>
-		</view>
-		
-		<view class="flex3 pt-1">
-			<view class="pt-3 p-r newDate">
-				<image src="../../static/images/new-icon.png" class="new-icon"></image>
-				<view class="colorf p-a top-0 left-0 right-0 w-100 text-center">
-					<view class="font-32 pt-4">12</view>
-					<view class="font-20">2020/04</view>
-				</view>
-			</view>
-			<view class="px-3">
-				<view class="newCon py-3 bB-e1">
-					<view class="font-32 tit avoidOverflow2">"破局希望"-中国医药行业发展透视与未来展望</view>
-					<image src="../../static/images/new-img.png" class="newImg"></image>
-				</view>
+				<block v-for="(c_item,c_index) in mainData" :key="c_index">
+					<view class="newCon py-3 bB-e1" v-show="c_item.create_time == item.join('-')"
+					@click="Router.navigateTo({route:{path:'/pages/detail/detail?menu_id=2&id='+c_item.id}})">
+						<view class="font-32 tit avoidOverflow2">{{c_item.title}}</view>
+						<image :src="c_item.mainImg[0].url" class="newImg"></image>
+					</view>
+				</block>
 			</view>
 		</view>
 		
@@ -44,10 +27,45 @@
 	export default {
 		data() {
 			return {
-				Router:this.$Router
+				Router:this.$Router,
+				mainData:[],
+				timeData:[]
 			}
 		},
+		onLoad(){
+			const self = this;
+			self.$Utils.loadAll(['getMainData'], self);
+		},
 		methods: {
+			
+			getMainData() {
+				const self = this;
+				const postData = {};
+				// postData.tokenFuncName = 'getProjectToken';
+				postData.searchItem = {
+					menu_id: 2,
+					thirdapp_id: 2
+				};
+				var callback = function(res){
+					if(res.info.data.length > 0){
+						self.mainData = res.info.data;
+						for(var i=0;i<res.info.data.length;i++){
+							self.mainData[i].create_time = self.mainData[i].create_time.substring(0,10);
+							self.timeData.push(self.mainData[i].create_time)
+						}
+						for(var j=0;j<self.timeData.length;j++){
+							if(self.timeData[j]==self.timeData[j+1]){
+								self.timeData.splice(j,1)
+							}
+								self.timeData[j] = self.timeData[j].split('-')
+						}
+					}
+					console.log('mainData',self.mainData)
+					console.log('timeData',self.timeData)
+					self.$Utils.finishFunc('getMainData');
+				}
+				self.$apis.articleGet(postData, callback);
+			}
 			
 		}
 	}
@@ -58,3 +76,5 @@
 .newCon .tit{width: 560rpx;}
 .newImg{width: 100%;height: 300rpx;margin-top: 20rpx;}
 </style>
+
+							var time = self.mainData[i].create_time.split('-')

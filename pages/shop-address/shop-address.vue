@@ -11,7 +11,7 @@
 					<view>159****5867</view>
 					<view class="color6 address">陕西省西安市雁塔区科技路高新大都荟A座2007</view>
 				</view>
-				<image src="../../static/images/address-icon.png" class="add-icon" @click="Router.navigateTo({route:{path:'/pages/shop-addAddress/shop-addAddress'}})"></image>
+				<image src="../../static/images/address-icon.png" class="add-icon" @click="Router.navigateTo({route:{path:'/pages/shop-addAddress/shop-addAddress?type=del'}})"></image>
 			</view>
 		</view>
 		
@@ -27,10 +27,32 @@
 	export default {
 		data() {
 			return {
-				Router:this.$Router
+				Router:this.$Router,
+				mainData:[]
 			}
 		},
+		onLoad(){
+			const self = this;
+			// self.$Utils.loadAll(['getMainData'], self);
+		},
 		methods: {
+			
+			getMainData() {
+				const self = this;
+				const postData = {};
+				// postData.tokenFuncName = 'getProjectToken';
+				postData.searchItem = {
+					menu_id: 3,
+					thirdapp_id: 2
+				};
+				var callback = function(res){
+					if(res.info.data.length > 0){
+						self.mainData = res.info.data[0];
+					}
+					self.$Utils.finishFunc('getMainData');
+				}
+				self.$apis.addressGet(postData, callback);
+			}
 			
 		}
 	}

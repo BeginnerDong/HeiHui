@@ -58,7 +58,11 @@
 		
 		<view class="bg-mask" v-show="is_show1">
 			<view class="bg-white p-a radius10 text-center tc">
-				<view class="txt">很抱歉，您还不是恒辉财富会员</view>
+				<view class="txt">
+					<view class="content ql-editor text-center" style="padding:0;" v-html="tipsData.content">
+						
+					</view>
+				</view>
 				<view class="" style="margin-bottom: 30rpx;color: #888;">联系客服：{{kefuData.phone}}</view>
 				<view class="flex1 bT-f5 btn">
 					<view class="w-50 bR-f5" @click="showToast1">我知道了</view>
@@ -90,12 +94,13 @@
 				text:'倒计时10秒',
 				currentTime:10,
 				hasView:false,
+				tipsData:{}
 			}
 		},
 		onLoad(){
 			const self = this;
 			uni.setStorageSync('path','/pages/familyTrust/familyTrust')
-			self.$Utils.loadAll(['getLabelData','getKefuData','getNoteData'], self);
+			self.$Utils.loadAll(['getLabelData','getKefuData','getNoteData','getTipsData'], self);
 		},
 		
 		onShow() {
@@ -182,6 +187,24 @@
 					}
 					
 				}	
+			},
+			
+			getTipsData() {
+				const self = this;
+				const postData = {};
+				postData.searchItem = {
+					thirdapp_id: 2,
+					title:'会员提示',
+					menu_id: 10
+				};
+				var callback = function(res) {
+					if (res.info.data.length > 0) {
+						self.tipsData = res.info.data[0]
+					}
+					console.log('menu',self.tipsData)
+					self.$Utils.finishFunc('getTipsData');
+				}
+				self.$apis.articleGet(postData, callback);
 			},
 			
 			getNoteData() {

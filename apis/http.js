@@ -28,8 +28,10 @@ export default {
 		var custom_header = {'content-type': 'application/json',};
 		uni.showLoading({
 			title: '加载中',
-			mask: true
+			mask: true,
+			//icon:'none'
 		});
+		
 		uni.request({
 			url: config.baseUrl + obj.url, //仅为示例，并非真实接口地址。
 			data: obj.data,		

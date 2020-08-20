@@ -2,7 +2,8 @@
 	<view class="px-3">
 		
 		<view class="map my-2 shadowM">
-			<image src="../../static/images/contactus-img.png" mode=""></image>
+			<!-- <image src="../../static/images/contactus-img.png" mode=""></image> -->
+			<map style="width:690rpx;height: 300rpx;" :latitude="mainData.latitude" :longitude="mainData.longitude"></map>
 		</view>
 		
 		<view class="flex1 py-3 pl-4 shadowM line-h mb-2">
@@ -46,20 +47,37 @@
 		},
 		onLoad(){
 			const self = this;
-			self.$Utils.loadAll(['getMainData'], self);
+			uni.setStorageSync('path','/pages/contactUS/contactUS')
+			self.$Utils.loadAll(['getMainData','getUserData'], self);
 		},
 		methods: {
 			
+			getUserData() {
+				const self = this;
+				const postData = {};
+				postData.tokenFuncName = 'getUserToken';
+				var callback = function(res){
+					if(res.info.data.length > 0){
+						self.userData = res.info.data[0];
+						self.data.title = self.userData.info.name;
+						self.data.phone = self.userData.info.phone
+					}
+					self.$Utils.finishFunc('getUserData');
+				}
+				self.$apis.userGet(postData, callback);
+			},
+			
 			submit(){
 				const self = this;
-				// self.data.title = 
-				// self.data.phone = 
+				if(self.data.content==''){
+					self.$Utils.showToast('请输入内容','none');
+					return
+				};
 				const postData = {
 					data:self.data
 				};
-				postData.tokenFuncName = 'getProjectToken';
+				postData.tokenFuncName = 'getUserToken';
 				const callback = (res) => {
-					
 					uni.setStorageSync('canClick', true);
 					if (res.solely_code == 100000) {
 						uni.showToast({
@@ -72,28 +90,13 @@
 							});
 						},2000)
 					} else {
-						self.$Utils.showToast('网络故障', 'none')
+						self.$Utils.showToast(res.msg, 'none')
 					}
 				};
 				self.$apis.messageAdd(postData, callback);
 			},
 			
-			getUserData() {
-				const self = this;
-				const postData = {};
-				
-				postData.tokenFuncName = 'getProjectToken';
-				
-				const callback = (res) => {
-					if (res.info.data.length > 0) {
-						self.userData = res.info.data[0];
-						
-					}
-					console.log('userData',self.userData)
-					self.$Utils.finishFunc('getUserData');
-				};
-				self.$apis.userGet(postData, callback);
-			},
+			
 			
 			getMainData() {
 				const self = this;
@@ -106,6 +109,8 @@
 				var callback = function(res){
 					if(res.info.data.length > 0){
 						self.mainData = res.info.data[0];
+						self.mainData.lalatitude = parseFloat(self.mainData.lalatitude);
+						self.mainData.longitude = parseFloat(self.mainData.longitude)
 					}
 					self.$Utils.finishFunc('getMainData');
 				}

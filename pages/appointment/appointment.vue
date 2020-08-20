@@ -6,14 +6,16 @@
 		
 		<view class="flex py-2 px-3">
 			<image src="../../static/images/about-icon.png" class="app-icon"></image>
-			<view class="font-32 font-w">视频预告</view>
+			<view class="font-32 font-w">最新视频</view>
 		</view>
 		<view class="flex px-3">
-			<video :src="nowData&&nowData.bannerImg&&nowData.bannerImg[0]&&nowData.bannerImg[0].url" class="spImg" controls=""></video>
+			<view style="position: absolute;width: 260rpx;height: 180rpx;left: 30rpx;z-index: 999;" @click="isShow(nowData)"></view>
+			<video :src="nowData&&nowData.bannerImg&&nowData.bannerImg[0]&&nowData.bannerImg[0].url" x5-video-orientation="landscape" x5-video-player-fullscreen="true"
+			 class="spImg" controls=""></video>
 			<view class="pl-2 flex-1 flex5 spTxt">
 				<view class="avoidOverflow2 flex-1">主题：{{nowData.title}}</view>
-				<view class="pb-1">时间：2020-07-03 20:00</view>
-				<view>专家：{{nowData.small_title}}</view>
+				<view class="pb-1">时间：{{nowData.create_time}}</view>
+				<view>嘉宾：{{nowData.small_title}}</view>
 			</view>
 		</view>
 		<view class="font-24 px-3 pt-3">
@@ -46,25 +48,47 @@
 		
 		<view class="flex1 mx-3 pb-3 p-r"
 		v-for="(item,index) in mainData" :key="index"
-		@click="goDetail(item)">
+		@click="isShow(item)">
 			<image :src="item.mainImg[0].url" class="spImg"></image>
 			<view class="pl-2 py-1 flex5 wqTxt">
 				<view class="font-30 font-w avoidOverflow2">{{item.title}}</view>
 				<view class="font-26 pt-3 avoidOverflow2">简介：{{item.description}}</view>
 			</view>
-			<view class="font-22 p-1 Mgb colorf line-h p-a top-0 left-0">专家 | {{item.small_title}}</view>
+			<view class="font-22 p-1 Mgb colorf line-h p-a top-0 left-0">嘉宾 | {{item.small_title}}</view>
 		</view>
 		
 		
 		<!-- 弹框 -->
+		<!-- 重要提示 -->
 		<view class="bg-mask" v-show="is_show">
-			<view class="bg-white mx-3 radius10 text-center font-30 colorf p-r tcBox">
-				<image src="../../static/images/x-icon.png" class="x-icon" @click="isShow"></image>
-				<view class="Mgb tit">请输入密码</view>
-				<view class="py-5">
-					<input type="text" value="" placeholder="姓名" />
-					<input type="text" value="" placeholder="密码" />
-					<view class="btn600" >进入</view>
+			<view class="bg-white p-r overflow-h tips">
+				<image src="../../static/images/product-icon8.png" class="x-icon" @click="close()"></image>
+				<view class="flex0 font-30 font-w pb-5 pt-3 mx-3">
+					<image src="../../static/images/product-icon9.png" class="tips-icon"></image>
+					<view>重要提示</view>
+				</view>
+				<view class="font-26 pt-2 mx-3">
+					<view class="content ql-editor" style="padding:0;" v-html="noteData.content">
+						
+					</view>
+				</view>
+				<view class="p-a bottom-0 left-0 right-0">
+					<view class="colorf font-24 pb-1">
+						<image src="../../static/images/product-icon10.png" class="tips-icon1"></image>
+						<view class="time">{{text}}</view>
+					</view>
+					<view class="tipBtn" @click="toDetail()" :style="hasView?'background:#E39423':'background:#999'">确定</view>
+				</view>
+			</view>
+		</view>
+		
+		<view class="bg-mask" v-show="is_show1">
+			<view class="bg-white p-a radius10 text-center tc">
+				<view class="txt">很抱歉，您还不是恒辉财富会员</view>
+				<view class="" style="margin-bottom: 30rpx;color: #888;">联系客服：{{kefuData.phone}}</view>
+				<view class="flex1 bT-f5 btn">
+					<view class="w-50 bR-f5" @click="showToast1">我知道了</view>
+					<view class="colorM w-50" @click="phoneCall()">联系客服</view>
 				</view>
 			</view>
 		</view>
@@ -78,21 +102,172 @@
 			return {
 				Router:this.$Router,
 				liCurr:0,
-				is_show:false,
+				
 				nowData:{},
 				mainData:[],
 				searchItem:{
 					type: 6,
 					thirdapp_id: 2
 				},
-				labelData:[]
+				labelData:[],
+				is_show: false,
+				is_show1:false,
+				kefuData:{},
+				isVip:false,
+				noteData:{},
+				text:'倒计时10秒',
+				currentTime:10,
+				hasView:false,
 			}
 		},
 		onLoad(){
 			const self = this;
+			uni.setStorageSync('path','/pages/appointment/appointment')
 			self.$Utils.loadAll(['getLabelData'], self);
 		},
+		
+		onShow() {
+			const self = this;
+			self.getUserInfoData()
+		},
+		
 		methods: {
+			
+			toDetail(){
+				const self = this;
+				if(self.hasView){
+					self.is_show = false;
+					self.text = '倒计时10秒';
+					const postData = {};
+					postData.tokenFuncName = 'getUserToken';
+					postData.data = {
+						deadline:Date.parse(new Date())/1000 + uni.getStorageSync('user_info').thirdApp.temporary*60 
+					};
+					var callback = function(res) {
+						if (res.solely_code == 100000) {
+							/* self.$Router.navigateTo({
+								route: {
+									path: '/pages/detail/detail?type=3&id=' + self.willId
+								}
+							}) */
+							uni.setStorageSync('appointmentData',self.willItem)
+							self.Router.navigateTo({route:{path:'/pages/appointmentDetail/appointmentDetail'}})
+						}
+					};
+					self.$apis.userInfoUpdate(postData, callback);
+				}
+			},
+			
+			getUserInfoData() {
+				const self = this;
+				const postData = {};
+				postData.tokenFuncName = 'getUserToken';
+				var callback = function(res) {
+					if (res.info.data.length > 0) {
+						self.userInfoData = res.info.data[0];
+						if(self.userInfoData.behavior==1){
+							self.isVip = true
+						};
+						
+					}
+				}
+				self.$apis.userInfoGet(postData, callback);
+			},
+			
+			isShow(item) {
+				const self = this;
+				console.log(item)
+				self.willItem = item;
+				if(self.isVip){
+					/* self.$Router.navigateTo({
+						route: {
+							path: '/pages/detail/detail?type=3&id=' + id
+						}
+					}) */
+					uni.setStorageSync('appointmentData',self.willItem)
+					self.Router.navigateTo({route:{path:'/pages/appointmentDetail/appointmentDetail'}})
+				}else{
+					if(self.userInfoData.deadline>0&&self.userInfoData.deadline>Date.parse(new Date())/1000){
+						/* self.$Router.navigateTo({
+							route: {
+								path: '/pages/detail/detail?type=3&id=' + id
+							}
+						}) */
+						uni.setStorageSync('appointmentData',self.willItem)
+						self.Router.navigateTo({route:{path:'/pages/appointmentDetail/appointmentDetail'}})
+					}else if(self.userInfoData.deadline>0&&self.userInfoData.deadline<Date.parse(new Date())/1000){
+						self.is_show1 = true;
+						return
+					}else if(self.userInfoData.deadline==0){
+						self.hasView = false;
+						self.interval = setInterval(function() {
+							self.currentTime--; //每执行一次让倒计时秒数减一
+							self.text='倒计时'+self.currentTime + 's';//按钮文字变成倒计时对应秒数
+							self.hasView = false;
+							//如果当秒数小于等于0时 停止计时器 且按钮文字变成重新发送 且按钮变成可用状态 倒计时的秒数也要恢复成默认秒数 即让获取验证码的按钮恢复到初始化状态只改变按钮文字
+							if (self.currentTime <= 0) {
+								clearInterval(self.interval)
+								
+								self.hasView = true;
+								self.text='可以查看啦';
+								self.currentTime= 10;
+							}
+						}, 1000);
+						self.is_show = !self.is_show
+					}
+					
+				}	
+			},
+			
+			getNoteData() {
+				const self = this;
+				const postData = {};
+				postData.searchItem = {
+					thirdapp_id: 2,
+					title:'重要提示'
+				};
+				var callback = function(res) {
+					if (res.info.data.length > 0) {
+						self.noteData = res.info.data[0]
+					}
+					self.$Utils.finishFunc('getNoteData');
+				}
+				self.$apis.articleGet(postData, callback);
+			},
+			
+			getKefuData() {
+				const self = this;
+				const postData = {};
+				postData.searchItem = {
+					menu_id: 3,
+					thirdapp_id: 2
+				};
+				var callback = function(res){
+					if(res.info.data.length > 0){
+						self.kefuData = res.info.data[0];
+					}
+					self.$Utils.finishFunc('getKefuData');
+				}
+				self.$apis.articleGet(postData, callback);
+			},
+			
+			phoneCall(){
+				const self = this;
+				uni.makePhoneCall({
+					phoneNumber:self.kefuData.phone
+				})
+			},
+			
+			showToast1(){
+				const self = this;
+				self.is_show1 = false
+			},
+			
+			close(){
+				const self = this;
+				self.is_show = false
+				clearInterval(self.interval)
+			},
 			
 			goDetail(item){
 				const self = this;
@@ -106,10 +281,7 @@
 				self.getMainData(true,id);
 			},
 			
-			isShow(){
-				const self = this;
-				self.is_show = !self.is_show
-			},
+			
 			
 			getLabelData() {
 				const self = this;
@@ -175,4 +347,7 @@
 .tcBox .tit{line-height: 80rpx;}
 .tcBox input{width: 600rpx;height: 80rpx;font-size: 26rpx;margin: 0 auto 30rpx;border: 1px solid #e1e1e1;border-radius: 10rpx;}
 .btn600{line-height: 70rpx;}
+.tc{width: 620rpx;margin: auto;left: 0;right: 0;top: 30%;}
+.tc .txt{padding: 60rpx;}
+.tc .btn{line-height: 100rpx;}
 </style>

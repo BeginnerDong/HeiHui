@@ -4,14 +4,9 @@
 		<!-- banner -->
 		<view class="banner radius20 overflow-h mx-3 mt-2"  @click="Router.redirectTo({route:{path:'/pages/shop-classify/shop-classify'}})">
 			<swiper class="swiper-box" indicator-dots="indicatorDots" autoplay="autoplay" interval="3000" indicator-active-color="#FF6F48">
-				<block>
+				<block v-for="(item,index) in sliderData.mainImg" :key="index">
 					<swiper-item class="swiper-item">
-						<image src="../../static/images/mall-banner.png" class="slide-image" />
-					</swiper-item>
-				</block>
-				<block>
-					<swiper-item class="swiper-item">
-						<image src="../../static/images/mall-banner.png" class="slide-image" />
+						<image :src="item.url" class="slide-image" />
 					</swiper-item>
 				</block>
 			</swiper>
@@ -142,14 +137,17 @@
 					thirdapp_id: 2,
 					type: 1
 				},
-				isLoadAll:false
+				isLoadAll:false,
+				sliderData:{}
 			}
 		},
 		onLoad(){
 			const self = this;
+			uni.setStorageSync('path','/pages/shop-index/shop-index')
 			self.paginate = self.$Utils.cloneForm(self.$AssetsConfig.paginate);
-			self.$Utils.loadAll(['getLabelData','getMainData'], self);
+			self.$Utils.loadAll(['getLabelData','getMainData','getSliderData'], self);
 		},
+		
 		onReachBottom() {
 			const self = this;
 			if (!self.isLoadAll && uni.getStorageSync('loadAllArray')) {
@@ -157,7 +155,23 @@
 				self.getMainData()
 			};
 		},
+		
 		methods: {
+			
+			getSliderData() {
+				const self = this;
+				const postData = {};
+				postData.searchItem = {
+					menu_id:49
+				};
+				var callback = function(res){
+					if(res.info.data.length > 0){
+						self.sliderData = res.info.data[0]
+					}
+					self.$Utils.finishFunc('getSliderData');
+				}
+				self.$apis.articleGet(postData, callback);
+			},
 			
 			goDetail(item){
 				const self = this;

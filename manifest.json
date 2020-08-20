@@ -66,13 +66,13 @@
         "permission" : {}
     },
     "h5" : {
-        "title" : "试折惠",
+        "title" : "恒辉资管",
         "devServer" : {
             "https" : false
         },
         "router" : {
-            "base" : "/wx/"
+            "base" : "/henghuiweb/"
         },
-        "domain" : "https://www.local-scanner.com"
+        "domain" : "https://test.solelyfinance.com"
     }
 }

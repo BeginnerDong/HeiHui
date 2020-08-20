@@ -3,7 +3,43 @@ import config from "@/config/index.config.js";
 
 
 export default {
-
+	
+	
+	logAdd(param, callback) {
+		var allParams = {
+			url: 'Common/Log/add',
+			type: 'post',
+			data: param,
+			sCallback: function(data) {
+				callback && callback(data);
+			}
+		};
+		http.HTTP(allParams);
+	},
+	
+	logUpdate(param, callback) {
+		var allParams = {
+			url: 'Common/Log/update',
+			type: 'post',
+			data: param,
+			sCallback: function(data) {
+				callback && callback(data);
+			}
+		};
+		http.HTTP(allParams);
+	},
+	
+	logGet(param, callback) {
+		var allParams = {
+			url: 'Common/Log/get',
+			type: 'post',
+			data: param,
+			sCallback: function(data) {
+				callback && callback(data);
+			}
+		};
+		http.HTTP(allParams);
+	},
 
 	WxJssdk(param, callback) {
 
@@ -31,7 +67,33 @@ export default {
 		http.HTTP(allParams);
 	},
 
-
+	
+	register(param, callback) {
+	
+		var allParams = {
+			url: 'Project/Solely/register',
+			type: 'post',
+			data: param,
+			sCallback: function(data) {
+				callback && callback(data);
+			}
+		};
+		http.HTTP(allParams);
+	},
+	
+	loginByUser(param, callback) {
+		console.log('api',callback)
+		var allParams = {
+			url: 'Project/Solely/loginByUser',
+			type: 'post',
+			data: param,
+			sCallback: function(data) {
+				callback && callback(data);
+			}
+		};
+		http.HTTP(allParams);
+	},
+	
 	bindShop(param, callback) {
 
 		var allParams = {
@@ -62,6 +124,19 @@ export default {
 
 		var allParams = {
 			url: 'Project/Solely/teamTotal',
+			type: 'post',
+			data: param,
+			sCallback: function(data) {
+				callback && callback(data);
+			}
+		};
+		http.HTTP(allParams);
+	},
+	
+	resetPassword(param, callback) {
+	
+		var allParams = {
+			url: 'Project/Solely/resetPassword',
 			type: 'post',
 			data: param,
 			sCallback: function(data) {

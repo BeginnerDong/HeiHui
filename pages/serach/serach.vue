@@ -3,15 +3,15 @@
 		
 		<view class="flex1 bB-e1 bg-white p-3">
 			<view class="p-r ssBox">
-				<input type="text" value="" placeholder="搜索你想找的" class="ss" />
+				<input type="text" v-model="keywords" auto-focus="true"  placeholder="搜索你想找的" class="ss" />
 				<image src="../../static/images/search-icon.png" class="ss-icon p-a"></image>
 			</view>
-			<view class="colorM">搜索</view>
+			<view class="colorM" @click="search()">搜索</view>
 		</view>
 		
-	<!-- 	<block v-for="(item,index) in mainData" :key="index">
-			<view class="article mt-3 mx-3 shadowM radius10 px-2 py-3 flex1"
-			@click="Router.navigateTo({route:{path:'/pages/detail/detail?type=4&id='+item.id}})">
+		<block v-for="(item,index) in mainData" :key="index">
+			<view class="article mt-3 mx-3 shadowM radius10 px-2 py-3 flex1" :data-id="item.id"
+			@click="Router.navigateTo({route:{path:'/pages/detail/detail?type='+self.searchItem.type+'&id='+$event.currentTarget.dataset.id}})">
 				<view style="height: 160rpx;" class="flex5">
 					<view class="tit font-30 flex-1 avoidOverflow3">{{item.title}}</view>
 					<view class="font-24 color9 pt-2">
@@ -20,7 +20,7 @@
 				</view>
 				<image src="../../static/images/about-img2.png" class="artImg"></image>
 			</view>
-		</block> -->
+		</block>
 		
 		
 	</view>
@@ -31,14 +31,33 @@
 		data() {
 			return {
 				Router:this.$Router,
-				mainData:[]
+				mainData:[],
+				keywords:'',
+				searchItem:{
+					
+				}
 			}
 		},
-		onLoad(){
+		
+		onLoad(options){
 			const self = this;
-			self.$Utils.loadAll(['getMainData'], self);
+			var options = self.$Utils.getHashParameters();
+			console.log(options);
+			self.searchItem.type = options[0].type;
+			//self.$Utils.loadAll(['getMainData'], self);
 		},
+		
 		methods: {
+			
+			search(){
+				const self = this;
+				if(self.keywords!=''){
+					self.searchItem.title = ['LIKE', ['%' + self.keywords + '%']]
+					self.getMainData(true)
+				}else{
+					self.$Utils.showToast('请输入关键词搜索','none');
+				}
+			},
 			
 			getMainData(isNew) {
 				const self = this;
@@ -47,18 +66,7 @@
 					self.mainData = []
 				}
 				// postData.tokenFuncName = 'getProjectToken';
-				postData.searchItem = {
-					id: ["in", [5, 6, 8]]
-				};
-				// postData.paginate = self.$Utils.cloneForm(self.paginate);
-				// postData.getAfter = {
-				//  	tagList:{
-				//  		tableName:'Article',
-				//  		middleKey:'id',
-				//  		key:'parentid',
-				// 		condition:'='
-				// 	}
-				// }
+				postData.searchItem = self.$Utils.cloneForm(self.searchItem);
 				var callback = function(res){
 					if(res.info.data.length > 0){
 						self.mainData = res.info.data;
@@ -69,7 +77,7 @@
 					console.log('mainData',self.mainData)
 					self.$Utils.finishFunc('getMainData');
 				}
-				self.$apis.labelGet(postData, callback);
+				self.$apis.articleGet(postData, callback);
 			}
 			
 		}

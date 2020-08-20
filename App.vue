@@ -3,6 +3,9 @@
 	import token from "./common/token.js"
 	export default {
 		onLaunch: function() {	
+			if(!uni.getStorageSync('user_token')){
+				this.$Router.redirectTo({route:{path:'/pages/login-register/login-register'}})
+			}
 		},
 		onShow: function() {
 			console.log('App Show')

@@ -85,9 +85,26 @@
 		},
 		onLoad(){
 			const self = this;
-			self.$Utils.loadAll(['getMainData'], self);
+			uni.setStorageSync('path','/pages/introduction/introduction')
+			self.$Utils.loadAll(['getMainData','getUserData'], self);
 		},
+		
 		methods: {
+			
+			getUserData() {
+				const self = this;
+				const postData = {};
+				postData.tokenFuncName = 'getUserToken';
+				var callback = function(res){
+					if(res.info.data.length > 0){
+						self.userData = res.info.data[0];
+						self.submitData.title = self.userData.info.name;
+						self.submitData.phone = self.userData.info.phone
+					}
+					self.$Utils.finishFunc('getUserData');
+				}
+				self.$apis.userGet(postData, callback);
+			},
 			
 			successSubmit(){
 				const self = this;
@@ -112,7 +129,7 @@
 				const postData = {
 					data:self.submitData
 				};
-				postData.tokenFuncName = 'getProjectToken';
+				postData.tokenFuncName = 'getUserToken';
 				const callback = (res) => {
 					
 					uni.setStorageSync('canClick', true);
@@ -127,7 +144,7 @@
 							self.submitData.content = '';
 						},2000)
 					} else {
-						self.$Utils.showToast(res, 'none')
+						self.$Utils.showToast(res.msg, 'none')
 					}
 				};
 				self.$apis.messageAdd(postData, callback);

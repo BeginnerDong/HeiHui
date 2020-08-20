@@ -94,8 +94,8 @@
 				</view>
 				
 				<view class="font-30 colorf text-center flex1 bT-e1 px-3 p-a left-0 right-0 bottom-0">
-					<view class="ggBtn" @click="addCar(mainData.sku[skuCurr])">加入购物车</view>
-					<view class="ggBtn" @click="goBuy(mainData.sku[skuCurr])">立即购买</view>
+					<view class="ggBtn" @click="addCar()">加入购物车</view>
+					<view class="ggBtn" @click="goBuy()">立即购买</view>
 				</view>
 			</view>
 		</view>
@@ -123,7 +123,57 @@
 			self.skuData = self.$Utils.cloneForm(self.mainData.sku);
 			console.log('main',self.mainData)
 		},
+		
+		onShow() {
+			const self = this;
+			self.orderList = [];
+			uni.removeStorageSync('payPro');
+		},
+		
 		methods: {
+			
+			goBuy(){
+				const self = this;
+				if(!self.mainData.sku[self.skuCurr]){
+					uni.setStorageSync('canClick',true);
+					self.$Utils.showToast('商品暂无可选规格！', 'none');
+					return
+				};
+				uni.setStorageSync('canClick',false);
+				self.orderList.push(
+					{sku_id:self.mainData.sku[self.skuCurr].id,count:1,
+					type:self.mainData.type,product:self.mainData,skuIndex:self.skuCurr},
+				);
+				uni.setStorageSync('payPro', self.orderList);
+				self.gg_show = !self.gg_show
+				self.Router.navigateTo({route:{path:'/pages/shop-order/shop-order'}})
+				uni.setStorageSync('canClick',true);
+			},
+			
+			addCar() {
+				const self = this;
+				var obj = self.mainData;
+				self.mainData.skuIndex = self.skuCurr;
+				self.mainData.skuId = self.mainData.sku[self.skuCurr].id;
+				var array = self.$Utils.getStorageArray('cartData');
+				for (var i = 0; i < array.length; i++) {
+					if (array[i].skuId == self.mainData.sku[self.skuCurr].id) {
+						var target = array[i]
+					}
+				}
+				
+				console.log(target)
+				if (target) {
+					target.count = target.count + 1
+				} else {
+					console.log(111)
+					var target = self.mainData;
+					target.count = 1;
+					target.isSelect = true;
+				}
+				self.$Utils.showToast('加入成功', 'none');
+				self.$Utils.setStorageArray('cartData', target, 'skuId', 999);
+			},
 			
 			ggShow(){
 				const self = this;
@@ -142,7 +192,7 @@
 				}
 			},
 			
-			addCar(sku){
+			/* addCar(sku){
 				const self = this;
 				var data = self.$Utils.cloneForm(self.mainData);
 				data.sku = sku;
@@ -165,9 +215,9 @@
 					self.$Utils.showToast('已加入购物车','none')
 				}
 				self.gg_show = !self.gg_show
-			},
+			}, */
 			
-			goBuy(sku){
+			/* goBuy(sku){
 				const self = this;
 				var data = self.$Utils.cloneForm(self.mainData);
 				data.sku = sku;
@@ -175,7 +225,7 @@
 				var buyOrder = data;
 				uni.setStorageSync('buyOrder',buyOrder)
 				self.Router.navigateTo({route:{path:'/pages/shop-order/shop-order'}})
-			}
+			} */
 			
 		}
 	}

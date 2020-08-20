@@ -4,8 +4,8 @@
 		<view class="p-r colorf">
 			<image src="../../static/images/personal center-img.png" class="perBg"></image>
 			<view class="flex1 h-100 p-a top-0 px-3">
-				<image src="../../static/images/my-img.png" class="userImg"></image>
-				<view class="flex-1 font-32 pl-2">哆啦A梦</view>
+				<image style="border-radius: 50%;overflow: hidden;" :src="userData.headImgUrl?userData.headImgUrl:'../../static/images/head.png'" class="userImg"></image>
+				<view class="flex-1 font-32 pl-2">{{userData?userData.nickname:''}}</view>
 			</view>
 			<view class="p-a top-0 flex4 right-0 m-3" @click="Router.navigateTo({route:{path:'/pages/personal-edit/personal-edit'}})">
 				<image src="../../static/images/personal center-icon.png" class="per-icon"></image>
@@ -19,33 +19,26 @@
 		</view>
 		
 		<view v-show="liCurr==0">
-			<view class="article mt-3 mx-3 shadowM radius10 px-2 py-3 flex1">
+			<view class="article mt-3 mx-3 shadowM radius10 px-2 py-3 flex1" v-for="(item,index) in mainData" :key="index">
 				<view>
-					<view class="tit font-30 avoidOverflow3">减持猛如虎！大股东突然出手 凶猛套现吓坏科技巨头股交电三级导航费房河南</view>
+					<view class="tit font-30 avoidOverflow3">{{item.article&&item.article[0]?item.article[0].title:''}}</view>
 					<view class="font-24 color9 pt-2">
-						<text class="artSgin">#投教专区</text> 2020-06-03
+						<!-- <text class="artSgin">#投教专区</text> --> {{item.article&&item.article[0]?item.article[0].create_time:''}}
 					</view>
 				</view>
-				<image src="../../static/images/about-img2.png" class="artImg"></image>
-			</view>
-			<view class="article mt-3 mx-3 shadowM radius10 px-2 py-3 flex1">
-				<view>
-					<view class="tit font-30 avoidOverflow3">减持猛如虎！大股东突然出手 凶猛套现吓坏科技巨头股交电三级导航费房河南</view>
-					<view class="font-24 color9 pt-2">
-						<text class="artSgin">#投教专区</text> 2020-06-03
-					</view>
-				</view>
-				<image src="../../static/images/about-img2.png" class="artImg"></image>
+				<image :src="item.article&&item.article[0]&&item.article[0].mainImg&&item.article[0].mainImg[0]?item.article[0].mainImg[0].url:''" class="artImg"></image>
 			</view>
 		</view>
 		
 		<view v-show="liCurr==1">
-			<view class="hot m-3 shadowM radius10 overflow-h font-24 p-r bg-white" @click="isShow">
+			<view class="hot m-3 shadowM radius10 overflow-h font-24 p-r bg-white" v-for="(item,index) in mainData" :key="index">
 				<image src="../../static/images/product-icon11.png" class="hotBg"></image>
 				<view class="colorf d-flex px-2 p-r py-4 borderDB">
-					<view class="font-22 hotSgin">热门</view>
-					<view class="font-32 color2 pl-1 tit">恒辉-嘉润7号集合资金信托计划（第3期F类）</view>
-					<view class="qySgin">工商企业</view>
+					<!-- <view class="font-22 hotSgin">热门</view> -->
+					<view class="font-32 color2 pl-1 tit">{{item.article&&item.article[0]?item.article[0].title:''}}</view>
+					<view class="qySgin">
+						{{item.article&&item.article[0]&&item.article[0].label&&item.article[0].label[item.article[0].menu_id]?item.article[0].label[item.article[0].menu_id].title:''}}
+					</view>
 				</view>
 				<view class="flex3 pt-5 px-2 pb-4">
 					<view class="flex4">
@@ -53,21 +46,21 @@
 							<image src="../../static/images/product-icon5.png" class="yq-icon"></image>
 							<view>预期收益最高可达</view>
 						</view>
-						<view class="colorR font-50 font-w">8.4%</view>
+						<view class="colorR font-50 font-w">{{item.article&&item.article[0]?item.article[0].small_title:''}}</view>
 					</view>
 					<view class="flex4">
 						<view class="flex1 pb-2">
 							<image src="../../static/images/product-icon6.png" class="yq-icon1"></image>
 							<view>项目期限(月)</view>
 						</view>
-						<view class="font-40">28</view>
+						<view class="font-40">{{item.article&&item.article[0]?item.article[0].keywords:''}}</view>
 					</view>
 					<view class="flex4">
 						<view class="flex1 pb-2">
 							<image src="../../static/images/product-icon7.png" class="yq-icon1"></image>
 							<view>起投金额(万)</view>
 						</view>
-						<view class="font-40">100</view>
+						<view class="font-40">{{item.article&&item.article[0]?item.article[0].description:''}}</view>
 					</view>
 				</view>
 			</view>
@@ -111,18 +104,101 @@
 			return {
 				Router:this.$Router,
 				liCurr:0,
-				is_show:false
+				is_show:false,
+				userData:{},
+				searchItem:{
+					status:1,
+					behavior:1,
+					
+				},
+				mainData:[]
 			}
 		},
+		
+		
+		onLoad() {
+			const self = this;
+			uni.setStorageSync('path','/pages/personal/personal')
+			self.paginate = self.$Utils.cloneForm(self.$AssetsConfig.paginate);
+			self.$Utils.loadAll(['getUserData','getMainData'], self);
+		},
+		
+		
+		onReachBottom() {
+			const self = this;
+			if (!self.isLoadAll && uni.getStorageSync('loadAllArray')) {
+				self.paginate.currentPage++;
+				self.getMainData()
+			};
+		},
+		
 		methods: {
 			changeLi(i){
 				const self = this;
-				self.liCurr = i;
+				if(self.liCurr!=i){
+					self.liCurr = i;
+					if(self.liCurr==0){
+						self.searchItem.behavior=1
+					}else if(self.liCurr==1){
+						self.searchItem.behavior=2
+					};
+					self.getMainData(true)
+				}
 			},
+			
 			isShow(){
 				const self = this;
 				self.is_show = !self.is_show
-			}
+			},
+			 
+			getUserData() {
+				const self = this;
+				const postData = {};
+				postData.tokenFuncName = 'getUserToken';
+				var callback = function(res){
+					if(res.info.data.length > 0){
+						self.userData = res.info.data[0];
+					}
+					self.$Utils.finishFunc('getUserData');
+				}
+				self.$apis.userGet(postData, callback);
+			},
+			
+			getMainData(isNew) {
+				const self = this;
+				if (isNew) {
+					self.mainData = [];
+					self.paginate = {
+						count: 0,
+						currentPage:1,
+						pagesize:10,
+						is_page:true,
+					}
+				};
+				const postData = {};
+				postData.tokenFuncName = 'getUserToken';
+				postData.searchItem = self.$Utils.cloneForm(self.searchItem);
+				postData.paginate = self.$Utils.cloneForm(self.paginate);
+				postData.getAfter = {
+					article:{
+						tableName:'Article',
+						middleKey:'relation_id',
+						key:'id',
+						searchItem:{
+							status:1
+						},
+						condition:'='
+					}
+				}
+				var callback = function(res){
+					if(res.info.data.length > 0){
+						self.mainData.push.apply(self.mainData,res.info.data)
+					}
+					self.$Utils.finishFunc('getMainData');
+				}
+				self.$apis.logGet(postData, callback);
+			},
+			
 		}
 	}
 </script>

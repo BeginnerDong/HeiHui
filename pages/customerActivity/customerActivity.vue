@@ -30,6 +30,7 @@
 		},
 		onLoad(){
 			const self = this;
+			uni.setStorageSync('path','/pages/customerActivity/customerActivity')
 			self.$Utils.loadAll(['getMainData'], self);
 		},
 		methods: {

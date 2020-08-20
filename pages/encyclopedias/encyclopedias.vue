@@ -1,7 +1,7 @@
 <template>
 	<view>
 		
-		<view class="p-r">
+		<view class="p-r"  @click="Router.navigateTo({route:{path:'/pages/serach/serach?type=5'}})">
 			<input type="text" value="" placeholder="搜索你想找的" class="ss"/>
 			<image src="../../static/images/search-icon.png" class="ss-icon p-a"></image>
 		</view>
@@ -52,10 +52,13 @@
 				labelData:[]
 			}
 		},
+		
 		onLoad(){
 			const self = this;
+			uni.setStorageSync('path','/pages/encyclopedias/encyclopedias')
 			self.$Utils.loadAll(['getLabelData'], self);
 		},
+		
 		methods: {
 			
 			changeLi(index,id){

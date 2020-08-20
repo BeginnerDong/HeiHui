@@ -2,7 +2,8 @@
 	<view>
 		
 		<view class="good flex1 px-3 pt-4 pb-3 bB-f5"
-		v-for="(item,index) in mainData" :key="index">
+		v-for="(item,index) in mainData" :key="index"
+		@click="goDetail(item)">
 			<image :src="item.mainImg[0].url" class="goodImg radius10"></image>
 			<view class="flex-1 pl-2">
 				<view class="font-30 flex-1 pb-4 avoidOverflow2">{{item.title}}</view>
@@ -23,6 +24,7 @@
 	export default {
 		data() {
 			return {
+				Router:this.$Router,
 				searchItem:{
 					thirdapp_id: 2,
 					type: 1
@@ -51,6 +53,12 @@
 			};
 		},
 		methods: {
+			
+			goDetail(item){
+				const self = this;
+				uni.setStorageSync('productDetail',item)
+				self.Router.navigateTo({route:{path:'/pages/shop-detail/shop-detail'}})
+			},
 			
 			getMainData(isNew) {
 				const self = this;

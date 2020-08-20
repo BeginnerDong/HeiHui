@@ -55,7 +55,7 @@ class Token {
 	}
 	
 	getWeixinToken(params,callback){
-		console.log('getWeixinToken',callback)
+		console.log('getWeixinToken1',callback)
 		var orginHref =  window.location.origin + window.location.pathname;
 		//var href = 'http://test.solelycloud.com/gouxuanweb/'
 	
@@ -99,13 +99,14 @@ class Token {
 					});
 					return;
 				};
-				window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx7db54ed176405e24&redirect_uri='+
+				window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx700af4c0583be8ab&redirect_uri='+
 					encodeURIComponent(href)+'&response_type=code&scope=snsapi_userinfo';
 				return;
 			};
             var postData = {
                 thirdapp_id:2,
                 code:param.code,
+				token:uni.getStorageSync('user_token')
             };
 			
 			if(param.parent_no){
@@ -119,8 +120,9 @@ class Token {
 			
             var c_callback = (res)=>{
                 console.log('c_callback-res',res) 
-				   console.log('c_callback',callback)
-                if(res.token){
+				callback&&callback(res);
+				  // return res
+               /* if(res.token){
                     uni.setStorageSync('user_token',res.token);
                     uni.setStorageSync('user_no',res.info.user_no);
                     uni.setStorageSync('user_info',res.info);
@@ -131,17 +133,19 @@ class Token {
                     callback&&callback();
                 }else{
                     alert('获取token失败')
-                };
+                }; */
             };  
 			uni.request({
 			    url: config.baseUrl+'/Wxauth',
 			    method:'POST',
 			    data:postData,
 			    success:function(res){
-			        console.log(res)
+			        console.log('哈哈',res)
 					
 			        if(res.data&&res.data.solely_code==100000){  
+						
 			            if(c_callback){
+							console.log('嘿嘿',res.data)
 			                c_callback && c_callback(res.data);
 			            };      
 			        }else if(res.data&&res.data.solely_code==300000){
@@ -170,7 +174,7 @@ class Token {
 						uni.setStorageSync('token_get_time',time);
 						if(time>3){
 							uni.showToast({
-							    title: '获取token回调失败',
+							    title: '获取token回调失败1',
 							    icon: 'fail',
 							    duration: 1000,
 							    mask:true
@@ -182,7 +186,7 @@ class Token {
 							window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid='+ param.sub_appid +'&redirect_uri='+
 							encodeURIComponent(href)+'&response_type=code&scope=snsapi_userinfo';
 						}else{
-							window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx7db54ed176405e24&redirect_uri='+
+							window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx700af4c0583be8ab&redirect_uri='+
 							encodeURIComponent(href)+'&response_type=code&scope=snsapi_userinfo';
 						};
 						
@@ -198,10 +202,11 @@ class Token {
 			        };
 			        
 			        
-			    }
+			    },
+				fail(res) {
+					console.log('failres',res)
+				}
 			})
-        }else if(uni.getStorageSync('user_token')&&!params.refreshToken){
-            callback&&callback();
         }else{
 			   
 		    if(hash){
@@ -217,7 +222,7 @@ class Token {
 			uni.setStorageSync('token_get_time',time);
 			if(time>3){
 				uni.showToast({
-				    title: '获取token回调失败',
+				    title: '获取token回调失败2',
 				    icon: 'fail',
 				    duration: 1000,
 				    mask:true
@@ -229,13 +234,26 @@ class Token {
 				window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid='+ param.sub_appid +'&redirect_uri='+
 				encodeURIComponent(href)+'&response_type=code&scope=snsapi_userinfo';
 			}else{
-				window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx7db54ed176405e24&redirect_uri='+
+				console.log(1111111)
+				window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx700af4c0583be8ab&redirect_uri='+
 				encodeURIComponent(href)+'&response_type=code&scope=snsapi_userinfo';
 			};   
 			 
         };
         
     } 
+	
+	getUserToken(callback,postData) {
+	    if((postData&&postData.refreshToken)||!uni.getStorageSync('user_token')){
+	        uni.removeStorageSync('user_token');
+	        uni.removeStorageSync('user_info');
+	        uni.redirectTo({
+	          url: '/pages/login-register/login-register'
+	        });
+	    }else{
+	        return uni.getStorageSync('user_token');
+	    }
+	}
 	
 	getWxauthToken(param,callback) {
   

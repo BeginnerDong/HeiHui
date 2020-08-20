@@ -4,8 +4,8 @@
 		<view class="p-r">
 			<image src="../../static/images/my-img1.png" class="myBg"></image>
 			<view class="flex1 h-100 px-3 p-r pt-5">
-				<image src="../../static/images/my-img.png" class="userImg"></image>
-				<view class="flex-1 font-32 pl-2 colorf">哆啦A梦</view>
+				<image style="overflow: hidden;border-radius: 50%;" :src="userData.headImgUrl?userData.headImgUrl:'../../static/images/head.png'" class="userImg"></image>
+				<view class="flex-1 font-32 pl-2 colorf">{{userData?userData.nickname:''}}</view>
 			</view>
 		</view>
 		
@@ -88,10 +88,30 @@
 	export default {
 		data() {
 			return {
-				Router:this.$Router
+				Router:this.$Router,
+				userData:{}
 			}
 		},
+		
+		onLoad() {
+			const self = this;
+			self.$Utils.loadAll(['getUserData'], self);
+		},
+		
 		methods: {
+			
+			getUserData() {
+				const self = this;
+				const postData = {};
+				postData.tokenFuncName = 'getUserToken';
+				var callback = function(res){
+					if(res.info.data.length > 0){
+						self.userData = res.info.data[0];
+					}
+					self.$Utils.finishFunc('getUserData');
+				}
+				self.$apis.userGet(postData, callback);
+			},
 			
 		}
 	}

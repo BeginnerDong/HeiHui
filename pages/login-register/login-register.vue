@@ -79,16 +79,16 @@
 		
 		onLoad() {
 			const self = this;
-			var param = self.$Utils.getHashParameters()[0];
+			/* var param = self.$Utils.getHashParameters()[0];
 			if(param.code){
 				return
 			}else{
 				var href = 'http://test.solelyfinance.com/henghuiweb/'
 				window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx700af4c0583be8ab&redirect_uri='+
 				encodeURIComponent(href)+'&response_type=code&scope=snsapi_userinfo';
-			}
+			} */
 			
-			//self.$Utils.loadAll(['tokenGet'], self);
+			self.$Utils.loadAll(['tokenGet'], self);
 		},
 		
 		methods: {

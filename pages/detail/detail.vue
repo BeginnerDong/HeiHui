@@ -14,7 +14,9 @@
 		</view>
 		
 		<view class="pt-3">
-			<video :src="mainData&&mainData.bannerImg&&mainData.bannerImg[0]&&mainData.bannerImg[0].url" controls></video>
+			<video :src="mainData&&mainData.bannerImg&&mainData.bannerImg[0]&&mainData.bannerImg[0].url"
+			v-show="mainData&&mainData.bannerImg&&mainData.bannerImg[0]&&mainData.bannerImg[0].url"
+			controls></video>
 			<view class="pt-3 font-26">
 				<view class="content ql-editor" style="padding:0;" v-html="mainData.content">
 					

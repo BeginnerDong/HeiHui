@@ -1,7 +1,8 @@
 <template>
 	<view>
 		
-		<video :src="mainData&&mainData.bannerImg&&mainData.bannerImg[0]&&mainData.bannerImg[0].url" controls></video>
+		<video :src="mainData&&mainData.bannerImg&&mainData.bannerImg[0]&&mainData.bannerImg[0].url" controls
+		v-show="mainData&&mainData.bannerImg&&mainData.bannerImg[0]&&mainData.bannerImg[0].url"></video>
 		
 		<view class="list flexX shadow">
 			<view class="li" :class="liCurr==0?'on':''" @click="changeLi(0)">简介</view>

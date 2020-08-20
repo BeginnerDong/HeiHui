@@ -19,19 +19,24 @@
 		</view>
 		
 		<view v-show="liCurr==0">
-			<view class="article mt-3 mx-3 shadowM radius10 px-2 py-3 flex1" v-for="(item,index) in mainData" :key="index">
-				<view>
+			<view class="article mt-3 mx-3 shadowM radius10 px-2 py-3 flex1" 
+			v-for="(item,index) in mainData" :key="index"
+			@click="Router.navigateTo({route:{path:'/pages/detail/detail?menu_id=2&id='+item.id}})">
+				<view class="flex5" style="height: 160rpx;">
 					<view class="tit font-30 avoidOverflow3">{{item.article&&item.article[0]?item.article[0].title:''}}</view>
 					<view class="font-24 color9 pt-2">
-						<!-- <text class="artSgin">#投教专区</text> --> {{item.article&&item.article[0]?item.article[0].create_time:''}}
+						<!-- <text class="artSgin">#</text> -->
+						{{item.article&&item.article[0]?item.article[0].create_time:''}}
 					</view>
 				</view>
-				<image :src="item.article&&item.article[0]&&item.article[0].mainImg&&item.article[0].mainImg[0]?item.article[0].mainImg[0].url:''" class="artImg"></image>
+				<image :src="item.article&&item.article[0]&&item.article[0].mainImg&&item.article[0].mainImg[0]?item.article[0].mainImg[0].url:'../../static/images/null.png'" class="artImg"></image>
 			</view>
 		</view>
 		
 		<view v-show="liCurr==1">
-			<view class="hot m-3 shadowM radius10 overflow-h font-24 p-r bg-white" v-for="(item,index) in mainData" :key="index">
+			<view class="hot m-3 shadowM radius10 overflow-h font-24 p-r bg-white" 
+			v-for="(item,index) in mainData" :key="index"
+			@click="Router.navigateTo({route: { path: '/pages/detail/detail?type=2&id=' + item.article[0].id } })">
 				<image src="../../static/images/product-icon11.png" class="hotBg"></image>
 				<view class="colorf d-flex px-2 p-r py-4 borderDB">
 					<!-- <view class="font-22 hotSgin">热门</view> -->

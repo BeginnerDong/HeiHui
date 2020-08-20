@@ -1,10 +1,12 @@
 <template>
 	<view>
 		
-		<image src="../../static/images/jianjie-img.png" class="img"></image>
+		<!-- <image src="../../static/images/jianjie-img.png" class="img"></image> -->
 		
-		<view class="p-r item">
-			<!-- <image src="../../static/images/jianjie-img4.png" class="bg-txt"></image> -->
+		<image :src="mainData&&mainData.mainImg&&mainData.mainImg[0]&&mainData.mainImg[0].url" mode="widthFix"></image>
+		
+		<!-- <view class="p-r item">
+			<image src="../../static/images/jianjie-img4.png" class="bg-txt"></image>
 			<view class="flex0 pt-5 z-index10 p-r">
 				<image src="../../static/images/jianjie-icon.png" class="jj-icon"></image>
 				<view class="color2 font-44 font-w text-center px-2">公司简介</view>
@@ -15,10 +17,10 @@
 					
 				</view>
 			</view>
-		</view>
+		</view> -->
 		
 		
-		<view class="p-r item">
+		<!-- <view class="p-r item">
 			<view class="flex0 pt-3 z-index10 p-r">
 				<image src="../../static/images/jianjie-icon.png" class="jj-icon"></image>
 				<view class="color2 font-44 font-w text-center px-2">企业文化</view>
@@ -28,11 +30,11 @@
 				<view class="content ql-editor" style="padding:0;" v-html="mainData.passage1">
 					
 				</view>
-				<!-- <image src="../../static/images/jianjie-img1.png" class="img1"></image> -->
+				<image src="../../static/images/jianjie-img1.png" class="img1"></image>
 			</view>
-		</view>
+		</view> -->
 		
-		<view class="p-r item">
+		<!-- <view class="p-r item">
 			<view class="flex0 pt-3 z-index10 p-r">
 				<image src="../../static/images/jianjie-icon.png" class="jj-icon"></image>
 				<view class="color2 font-44 font-w text-center px-2">合作伙伴</view>
@@ -41,7 +43,7 @@
 			<view class="mx-3 p-3 mt-3 p-r shadowM radius10 flex flex-wrap">
 				<image v-for="(item,index) in mainData.bannerImg" :src="item.url" class="img2"></image>
 			</view>
-		</view>
+		</view> -->
 		
 		<view class="p-r item">
 			<view class="flex0 pt-3 z-index10 p-r">

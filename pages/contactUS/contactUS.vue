@@ -1,26 +1,26 @@
 <template>
-	<view class="px-3">
+	<view class="px-3 pt-2">
 		
-		<view class="map my-2 shadowM">
+		<view class="map mb-2 shadowM">
 			<!-- <image src="../../static/images/contactus-img.png" mode=""></image> -->
 			<map style="width:690rpx;height: 300rpx;" :latitude="mainData.latitude" :longitude="mainData.longitude"></map>
 		</view>
 		
-		<view class="flex1 py-3 pl-4 shadowM line-h mb-2">
+		<view class="flex1 py-3 pl-4 shadowM line-h mb-3">
 			<image src="../../static/images/contactus-icon.png" class="us-icon"></image>
 			<view class="flex-1 pl-3">
 				<view class="font-24 color6 pb-2">联系电话</view>
 				<view>{{mainData.phone}}</view>
 			</view>
 		</view>
-		<view class="flex1 py-3 pl-4 shadowM line-h mb-2">
+		<view class="flex1 py-3 pl-4 shadowM line-h mb-3">
 			<image src="../../static/images/contactus-icon1.png" class="us-icon"></image>
 			<view class="flex-1 pl-3">
 				<view class="font-24 color6 pb-2">联系地址</view>
 				<view>{{mainData.description}}</view>
 			</view>
 		</view>
-		<view class="flex3 py-3 pl-4 shadowM line-h mb-2">
+		<view class="flex3 py-3 pl-4 shadowM line-h mb-3">
 			<image src="../../static/images/contactus-icon2.png" class="us-icon1"></image>
 			<view class="flex-1 pl-3">
 				<view class="font-24 color6 pb-2">意见反馈</view>
@@ -124,5 +124,5 @@
 <style scoped>
 .map{height: 300rpx;width: 690rpx;}
 .map image{width: 100%;height: 100%;}
-textarea{width: 540rpx;height: 240rpx;background-color: #f5f5f5;font-size: 22rpx;padding: 20rpx;box-sizing: border-box;margin: 0;}
+textarea{width: 540rpx;height: 340rpx;background-color: #f5f5f5;font-size: 22rpx;padding: 20rpx;box-sizing: border-box;margin: 0;}
 </style>

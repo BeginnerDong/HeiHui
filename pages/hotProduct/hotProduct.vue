@@ -33,7 +33,8 @@
 
 		<view>
 			<!-- 置顶 -->
-			<view class="hot m-3 shadowM radius10 overflow-h font-24 p-r bg-white" v-if="topData.title" @click="isShow(topData.id)">
+			<view class="hot m-3 shadowM radius10 overflow-h font-24 p-r bg-white" 
+			v-if="topData.title" @click="isShow(topData.id)">
 				<image src="../../static/images/product-icon11.png" class="hotBg"></image>
 				<view class="colorf d-flex px-2 p-r py-4 borderDB">
 					<view class="font-22 zdSgin">置顶</view>
@@ -65,8 +66,10 @@
 				</view>
 			</view>
 			<!-- 热门 -->
-			<view class="hot m-3 shadowM radius10 overflow-h font-24 p-r bg-white"  v-if="hotData.title"  @click="isShow(hotData.id,'if')">
-				<view class="hot-mask" v-show="!isVip"></view>
+			<view class="hot m-3 shadowM radius10 overflow-h font-24 p-r bg-white"  
+			v-if="hotData.title"  @click="isShow(hotData.id,'if')"
+			:class="isVip?'':'mhBox'">
+				<!-- <view class="hot-mask" v-show="!isVip"></view> -->
 				<image src="../../static/images/product-icon11.png" class="hotBg"></image>
 				<view class="colorf d-flex px-2 p-r py-4 borderDB">
 					<view class="font-22 hotSgin">热门</view>
@@ -79,28 +82,30 @@
 							<image src="../../static/images/product-icon5.png" class="yq-icon"></image>
 							<view>预期收益最高可达</view>
 						</view>
-						<view class="colorR font-50 font-w">{{hotData.small_title}}</view>
+						<view class="colorR font-50 font-w" :class="isVip?'':'mh'">{{hotData.small_title}}</view>
 					</view>
 					<view class="flex4">
 						<view class="flex1 pb-2">
 							<image src="../../static/images/product-icon6.png" class="yq-icon1"></image>
 							<view>项目期限(月)</view>
 						</view>
-						<view class="font-40">{{hotData.keywords}}</view>
+						<view class="font-40" :class="isVip?'':'mh'">{{hotData.keywords}}</view>
 					</view>
 					<view class="flex4">
 						<view class="flex1 pb-2">
 							<image src="../../static/images/product-icon7.png" class="yq-icon1"></image>
 							<view>起投金额(万)</view>
 						</view>
-						<view class="font-40">{{hotData.description}}</view>
+						<view class="font-40" :class="isVip?'':'mh'">{{hotData.description}}</view>
 					</view>
 				</view>
 			</view>
 			<!-- 其他 -->
-			<view class="hot m-3 shadowM radius10 overflow-h font-24 p-r bg-white" @click="isShow(item.id,'if')" v-for="(item,index) in mainData"
-			 :key="index">
-				<view class="hot-mask" v-show="!isVip"></view>
+			<view class="hot m-3 shadowM radius10 overflow-h font-24 p-r bg-white" 
+			@click="isShow(item.id,'if')" v-for="(item,index) in mainData"
+			:key="index"
+			:class="isVip?'':'mhBox'">
+				<!-- <view class="hot-mask" v-show="!isVip"></view> -->
 				<image src="../../static/images/product-icon11.png" class="hotBg"></image>
 				<view class="colorf d-flex px-2 p-r py-4 borderDB">
 					<view class="font-32 color2 pl-1 tit">{{item.title}}</view>
@@ -112,21 +117,21 @@
 							<image src="../../static/images/product-icon5.png" class="yq-icon"></image>
 							<view>预期收益最高可达</view>
 						</view>
-						<view class="colorR font-50 font-w">{{item.small_title}}</view>
+						<view class="colorR font-50 font-w" :class="isVip?'':'mh'">{{item.small_title}}</view>
 					</view>
 					<view class="flex4">
 						<view class="flex1 pb-2">
 							<image src="../../static/images/product-icon6.png" class="yq-icon1"></image>
 							<view>项目期限(月)</view>
 						</view>
-						<view class="font-40">{{item.keywords}}</view>
+						<view class="font-40" :class="isVip?'':'mh'">{{item.keywords}}</view>
 					</view>
 					<view class="flex4">
 						<view class="flex1 pb-2">
 							<image src="../../static/images/product-icon7.png" class="yq-icon1"></image>
 							<view>起投金额(万)</view>
 						</view>
-						<view class="font-40">{{item.description}}</view>
+						<view class="font-40" :class="isVip?'':'mh'">{{item.description}}</view>
 					</view>
 				</view>
 			</view>
@@ -465,4 +470,7 @@
 	.tc{width: 620rpx;margin: auto;left: 0;right: 0;top: 30%;}
 	.tc .txt{padding: 60rpx;}
 	.tc .btn{line-height: 100rpx;}
+	
+	.mhBox{filter: blur(1px);}
+	.mh{filter: blur(6px);}
 </style>

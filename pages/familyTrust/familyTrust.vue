@@ -18,7 +18,7 @@
 			<view class="mx-3 mt-3 p-r bB-f5" v-show="index == 0"
 			@click="isShow(item.id)">
 				<image :src="item&&item.mainImg&&item.mainImg[0]&&item.mainImg[0].url" class="trustImg"></image>
-				<view class="font-32 colorf p-1 p-a bottom-0 ">{{item.title}}</view>
+				<view class="font-32 colorf p-1 p-a bottom-0 jbTit">{{item.title}}</view>
 			</view>
 		</block>
 		

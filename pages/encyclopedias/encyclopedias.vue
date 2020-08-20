@@ -17,7 +17,7 @@
 			<view class="mt-3 mb-2 mr-2 p-r radius10 shadow overflow-h flex-shrink" v-show="index<5"
 			v-for="(item,index) in topData" :key="index"
 			@click="Router.navigateTo({route:{path:'/pages/detail/detail?type=5&id='+item.id}})">
-				<image :src="item.mainImg[0].url" class="trustImg"></image>
+				<image :src="item&&item.mainImg&&item.mainImg[0]&&item.mainImg[0].url" class="trustImg"></image>
 				<view class="font-32 p-3 p-aX bottom-0 bg-white text-center">{{item.title}}</view>
 			</view>
 		</view>

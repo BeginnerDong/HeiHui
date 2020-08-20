@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<view>
+		<view v-show="nowData&&nowData.mainImg&&nowData.mainImg[0]&&nowData.mainImg[0].url">
 			<image :src="nowData&&nowData.mainImg&&nowData.mainImg[0]&&nowData.mainImg[0].url" class="appoinImg"></image>
 		</view>
 		
@@ -10,8 +10,11 @@
 		</view>
 		<view class="flex px-3">
 			<view style="position: absolute;width: 260rpx;height: 180rpx;left: 30rpx;z-index: 999;" @click="isShow(nowData)"></view>
-			<video :src="nowData&&nowData.bannerImg&&nowData.bannerImg[0]&&nowData.bannerImg[0].url" x5-video-orientation="landscape" x5-video-player-fullscreen="true"
-			 class="spImg" controls=""></video>
+			<video :src="nowData&&nowData.bannerImg&&nowData.bannerImg[0]&&nowData.bannerImg[0].url" 
+			x5-video-orientation="landscape" x5-video-player-fullscreen="true"
+			class="spImg" controls=""
+			v-if="nowData&&nowData.bannerImg&&nowData.bannerImg[0]&&nowData.bannerImg[0].url"></video>
+			<image src="../../static/images/null1.png" v-else class="spImg"></image>
 			<view class="pl-2 flex-1 flex5 spTxt">
 				<view class="avoidOverflow2 flex-1">主题：{{nowData.title}}</view>
 				<view class="pb-1">时间：{{nowData.create_time}}</view>
@@ -49,7 +52,7 @@
 		<view class="flex1 mx-3 pb-3 p-r"
 		v-for="(item,index) in mainData" :key="index"
 		@click="isShow(item)">
-			<image :src="item.mainImg[0].url" class="spImg"></image>
+			<image :src="item&&item.mainImg&&item.mainImg[0]&&item.mainImg[0].url?item.mainImg[0].url:'../../static/images/null.png'" class="spImg"></image>
 			<view class="pl-2 py-1 flex5 wqTxt">
 				<view class="font-30 font-w avoidOverflow2">{{item.title}}</view>
 				<view class="font-26 pt-3 avoidOverflow2">简介：{{item.description}}</view>
@@ -123,7 +126,7 @@
 		onLoad(){
 			const self = this;
 			uni.setStorageSync('path','/pages/appointment/appointment')
-			self.$Utils.loadAll(['getLabelData'], self);
+			self.$Utils.loadAll(['getLabelData','getTipsData'], self);
 		},
 		
 		onShow() {
@@ -217,6 +220,23 @@
 					}
 					
 				}	
+			},
+			
+			getTipsData() {
+				const self = this;
+				const postData = {};
+				postData.searchItem = {
+					thirdapp_id: 2,
+					title:'会员提示',
+					menu_id: 10
+				};
+				var callback = function(res) {
+					if (res.info.data.length > 0) {
+						self.tipsData = res.info.data[0]
+					}
+					self.$Utils.finishFunc('getTipsData');
+				}
+				self.$apis.articleGet(postData, callback);
 			},
 			
 			getNoteData() {

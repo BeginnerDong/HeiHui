@@ -11,10 +11,10 @@
 			<view class="mx-3 mt-3 colorf p-r" v-for="(item,index) in mainData" :key="index">
 				<image src="../../static/images/coupons-img1.png" v-if="item.transport_status==0" class="cardImg"></image>
 				<image src="../../static/images/coupons-img.png" v-if="item.transport_status==2" class="cardImg"></image>
-				<view class="p-aXY flex1 px-3 h-100 line-h">
-					<view >
-						<view class="font-40 pb-5">{{item.child&&item.child[0]?item.child[0].title:''}}</view>
-						<view class="font-30 pb-2">仅限兑换上述指定商品使用</view>
+				<view class="p-aXY flex1 px-3 h-100"  style="width: 100%;">
+					<view class="flex-1" style="">
+						<view class="font-30 pb-2" style="width: 70%;height:140rpx">{{item.child&&item.child[0]?item.child[0].title:''}}</view>
+						<view class="font-26 pb-2">仅限兑换上述指定商品使用</view>
 						<!-- <view class="font-22">有效期：2019.02.20-2019.11.30</view> -->
 					</view>
 					<view class="colorM font-w pr-2 font-30" v-if="item.transport_status==0" @click="orderUpdate(index)">点击使用</view>
@@ -40,7 +40,8 @@
 					type: 2,
 					transport_status:0
 				},
-				mainData:[]
+				mainData:[],
+				addressData:{}
 			}
 		},
 		
@@ -59,31 +60,62 @@
 			};
 		},
 		
+		onShow() {
+			const self = this;
+			if(uni.getStorageSync('choosedAddressData')){
+				self.addressData = uni.getStorageSync('choosedAddressData')
+			}
+		},
+		
 		methods: {
 			
 			orderUpdate(index) {
 				const self = this;
-				uni.setStorageSync('canClick', false);
-				const postData = {};
-				postData.tokenFuncName = 'getUserToken';
-				postData.data = {
-					transport_status:2,
+				console.log('self.addressData',self.addressData)
+				if(JSON.stringify(self.addressData)=='{}'){
+					uni.showModal({
+						title:'提示',
+						content:'请选择或添加收货地址',
+						success(res) {
+							if(res.confirm){
+								self.$Router.navigateTo({route:{path:'/pages/shop-address/shop-address'}})
+							}
+						}
+					})
+					return
 				};
-				postData.searchItem = {
-					id:self.mainData[index].id,
-				};
-				const callback = (data) => {
-					uni.setStorageSync('canClick', true);
-					if (data && data.solely_code == 100000) {
-						self.$Utils.showToast('操作成功','none');
-						setTimeout(function() {
-							self.changeLi(1)
-						}, 1000);
-					} else {
-						self.$Utils.showToast(data.msg,'none')
+				uni.showModal({
+					title:'提示',
+					content:'是否确认使用',
+					
+					success(res) {
+						if(res.confirm){
+							uni.setStorageSync('canClick', false);
+							const postData = {};
+							postData.tokenFuncName = 'getUserToken';
+							postData.data = {
+								transport_status:2,
+								snap_address:self.addressData
+							};
+							postData.searchItem = {
+								id:self.mainData[index].id,
+							};
+							const callback = (data) => {
+								uni.setStorageSync('canClick', true);
+								if (data && data.solely_code == 100000) {
+									self.$Utils.showToast('操作成功','none');
+									setTimeout(function() {
+										self.changeLi(1)
+									}, 1000);
+								} else {
+									self.$Utils.showToast(data.msg,'none')
+								}
+							};
+							self.$apis.orderUpdate(postData, callback);
+						}
 					}
-				};
-				self.$apis.orderUpdate(postData, callback);
+				})
+				
 			 },
 			
 			changeLi(i){

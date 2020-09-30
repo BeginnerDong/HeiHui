@@ -6,13 +6,13 @@
 		
 		<view class="list flexX shadow">
 			<view class="li" :class="liCurr==0?'on':''" @click="changeLi(0)">简介</view>
-			<view class="li" :class="liCurr==1?'on':''" @click="changeLi(1)">演讲人</view>
-			<view class="li" :class="liCurr==2?'on':''" @click="changeLi(2)">总结</view>
+			<!-- <view class="li" :class="liCurr==1?'on':''" @click="changeLi(1)">演讲人</view>
+			<view class="li" :class="liCurr==2?'on':''" @click="changeLi(2)">总结</view> -->
 		</view>
 		
 		<view class="p-3">
 			<view v-show="liCurr==0">
-				<view class="content ql-editor" style="padding:0;" v-html="mainData.description">
+				<view class="content ql-editor" style="padding:0;" v-html="mainData.passage1">
 					
 				</view>
 			</view>

@@ -13,7 +13,7 @@
 				<block v-for="(c_item,c_index) in item.data" :key="c_index">
 					<view class="newCon py-3 bB-e1"
 					@click="Router.navigateTo({route:{path:'/pages/detail/detail?menu_id=2&id='+c_item.id}})">
-						<view class="font-32 tit avoidOverflow2">{{c_item.title}}</view>
+						<view class="font-34 tit avoidOverflow2" style="font-weight: 700;">{{c_item.title}}</view>
 						<image :src="c_item.mainImg[0].url" class="newImg"></image>
 					</view>
 				</block>
@@ -47,40 +47,31 @@
 					menu_id: 2,
 					thirdapp_id: 2
 				};
+				postData.order = {
+					publish_time:'desc'
+				};
 				var callback = function(res){
-					/* if(res.info.data.length > 0){
-						self.mainData = res.info.data;
-						for(var i=0;i<res.info.data.length;i++){
-							self.mainData[i].create_time = self.mainData[i].create_time.substring(0,10);
-							self.timeData.push(self.mainData[i].create_time)
-						}
-						for(var j=0;j<self.timeData.length;j++){
-							if(self.timeData[j]==self.timeData[j+1]){
-								self.timeData.splice(j,1)
-							}
-								self.timeData[j] = self.timeData[j].split('-')
-						}
-					} */
 					if (res.info.data.length > 0) {
 						for (var i = 0; i < res.info.data.length; i++) {
-							res.info.data[i].create_time = res.info.data[i].create_time.substr(0,10)
+							res.info.data[i].publish_time = self.$Utils.timeto(res.info.data[i].publish_time,'ymd-hms').substr(0,10)
+							
 							if(self.mainData.length>0){
 								var hasone = false;
 								for(var j =0;j<self.mainData.length;j++){
-									if(res.info.data[i].create_time==self.mainData[j].menu){
+									if(res.info.data[i].publish_time==self.mainData[j].menu){
 										self.mainData[j].data.push(res.info.data[i]);
 										hasone = true;
 									};
 								};
 								if(!hasone){
 									self.mainData.push({
-										menu: res.info.data[i].create_time,
+										menu: res.info.data[i].publish_time,
 										data:[res.info.data[i]]
 									});
 								};
 							}else{
 								self.mainData.push({
-									menu: res.info.data[i].create_time,
+									menu: res.info.data[i].publish_time,
 									data:[res.info.data[i]]
 								})
 							};
@@ -105,5 +96,3 @@
 .newCon .tit{width: 560rpx;}
 .newImg{width: 100%;height: 300rpx;margin-top: 20rpx;}
 </style>
-
-							var time = self.mainData[i].create_time.split('-')

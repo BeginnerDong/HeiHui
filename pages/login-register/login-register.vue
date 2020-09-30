@@ -12,7 +12,7 @@
 			</view>
 			<view class="xx flex1 bB-f5 pt-4 pb-2 mb-2">
 				<image src="../../static/images/the login-icon1.png" class="sj-icon"></image>
-				<input type="number" value="" placeholder="手机号" v-model="submitData.phone"/>
+				<input type="text" value="" placeholder="手机号或员工登录名" v-model="submitData.phone"/>
 			</view>
 			<view class="xx flex1 bB-f5 pt-4 pb-2 mb-2" v-show="is_show==0 || is_show==1">
 				<image src="../../static/images/the login-icon2.png" class="mm-icon"></image>
@@ -43,6 +43,12 @@
 				<image src="../../static/images/mall-icon3.png" class="R-icon"></image>
 			</view>
 		</view>
+		<view class="flex0 pt-5" v-show="is_show==0">
+			<view class="d-flex a-center">
+			
+				登录即代表同意<span style="color: #E39423;" @click="showModel">《{{artData.title}}》</span>
+			</view>
+		</view>
 		<!-- 注册显示 -->
 		<view class="flex0 pt-5" v-show="is_show==1">
 			<view class="d-flex a-center" @click="isShow(0)">
@@ -51,6 +57,33 @@
 			</view>
 		</view>
 		
+		<view class="flex0 pt-5" v-show="is_show==1">
+			<view class="d-flex a-center">
+				<image @click="change" style="margin-right: 20rpx;height: 30rpx;width: 30rpx;" :src="isAgree?'../../static/images/shopping-icon.png':'../../static/images/shopping-icon1.png'"></image>
+				注册须阅读并同意<span style="color: #E39423;" @click="showModel">《{{artData.title}}》</span>
+			</view>
+		</view>
+		<view class="bg-mask" v-show="showToast">
+			<view class="bg-white p-r overflow-h tips">
+				<image src="../../static/images/product-icon8.png" class="x-icon" style="margin: 20px;" @click="showModel()"></image>
+				<view class="flex0 font-30 font-w pb-3 pt-3 a-center" style="border-bottom: 1px solid #E5E5E5;">
+					<image src="../../static/images/product-icon9.png" class="tips-icon"></image>
+					<view>{{artData.title}}</view>
+				</view>
+				<view class="font-26 pt-2 mx-3" style="overflow-y: auto;height: 500px;padding-bottom: 150px;">
+					<view class="content ql-editor" style="padding:0;" v-html="artData.content">
+						
+					</view>
+				</view>
+				<view class="p-a bottom-0 left-0 right-0">
+					<!-- <view class="colorf font-24 pb-1">
+						<image src="../../static/images/product-icon10.png" class="tips-icon1"></image>
+						<view class="time">{{text}}</view>
+					</view> -->
+					<view class="tipBtn" @click="showModel()" style="background:#E39423">确定</view>
+				</view>
+			</view>
+		</view>
 	</view>
 </template>
 
@@ -73,26 +106,57 @@
 				currentTime:61,
 				text:'获取验证码',
 				hasSend:false,
+				isAgree:false,
+				showToast:false,
+				artData:{}
 			}
 		},
 		
 		
-		onLoad() {
+		onShow() {
 			const self = this;
-			/* var param = self.$Utils.getHashParameters()[0];
+			var param = self.$Utils.getHashParameters()[0];
+			self.$Utils.loadAll(['getArtData'], self);
 			if(param.code){
 				return
 			}else{
-				var href = 'http://test.solelyfinance.com/henghuiweb/'
+				var href = 'http://szegam.com/h5'
 				window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx700af4c0583be8ab&redirect_uri='+
 				encodeURIComponent(href)+'&response_type=code&scope=snsapi_userinfo';
-			} */
+			}
 			
-			self.$Utils.loadAll(['tokenGet'], self);
+			
 		},
 		
 		methods: {
 			
+			change(){
+				const self = this;
+				self.isAgree = !self.isAgree
+			},
+			
+			showModel(){
+				const self = this;
+				self.showToast = !self.showToast
+			},
+			
+			getArtData() {
+				const self = this;
+				const postData = {};
+				// postData.tokenFuncName = 'getProjectToken';
+				postData.searchItem = {
+					id: 49,
+					thirdapp_id: 2
+				};
+				postData.noLoading = true
+				var callback = function(res){
+					if(res.info.data.length > 0){
+						self.artData = res.info.data[0];
+					}
+					self.$Utils.finishFunc('getArtData');
+				}
+				self.$apis.articleGet(postData, callback);
+			},
 			
 			sendCode(){
 				var self = this;
@@ -199,7 +263,7 @@
 					return
 				};
 				var reg = /^1[3456789]\d{9}$/
-				const postData = self.$Utils.cloneForm(self.submitData);
+				const postData = self.$Utils.cloneForm(newObject);
 				self.$Utils.showToast('登陆中...', 'none')
 				const callback = (res) => {
 					if (res.solely_code == 100000) {
@@ -230,7 +294,7 @@
 				const self = this;
 				const postData = {
 					searchItem: {
-						user_no: 'U81688075223421'
+						user_no: 'U917130956611055'
 					}
 				};
 				console.log('postData', postData)
@@ -253,6 +317,7 @@
 				const self = this;
 				var newObject = self.$Utils.cloneForm(self.submitData);
 				delete newObject.newPassword;
+				
 				var pass = self.$Utils.checkComplete(newObject);
 				if(!pass){
 					self.$Utils.showToast('请补全注册信息', 'none')
@@ -261,6 +326,10 @@
 				var reg = /^1[3456789]\d{9}$/
 				if(!reg.test(self.submitData.phone)){
 					self.$Utils.showToast('电话号码格式错误','none')
+					return
+				};
+				if(!self.isAgree){
+					self.$Utils.showToast('请勾选并同意"'+self.artData.title+'"','none')
 					return
 				};
 				const postData = self.$Utils.cloneForm(newObject);

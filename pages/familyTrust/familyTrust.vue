@@ -10,7 +10,7 @@
 		<view class="list flexX">
 			<view class="li" :class="liCurr==index?'on':''" @click="changeLi(index,item.id)"
 			v-for="(item,index) in labelData" :key="index"
-			:style="{width: 100/labelData.length+'%'}">{{item.title}}</view>
+			:style="labelData.length<=3?{width: 100/labelData.length+'%'}:'width:30%'">{{item.title}}</view>
 		</view>
 		<view class="f5Bj-H20"></view>
 		
@@ -27,7 +27,7 @@
 			<view class="flex5 flex-1 conTxt">
 				<view class="tit font-32 avoidOverflow2 flex-1">{{item.title}}</view>
 				<view class="font-24 color9 pt-2">
-					<text class="artSgin">#{{item.label[item.menu_id].title}}</text> {{item.create_time}}
+					<text class="artSgin">#{{item.label[item.menu_id].title}}</text> {{item.publish_time}}
 				</view>
 			</view>
 			<image :src="item&&item.mainImg&&item.mainImg[0]&&item.mainImg[0].url" class="artImg"></image>
@@ -39,7 +39,7 @@
 				<image src="../../static/images/product-icon8.png" class="x-icon" @click="close()"></image>
 				<view class="flex0 font-30 font-w pb-5 pt-3 mx-3">
 					<image src="../../static/images/product-icon9.png" class="tips-icon"></image>
-					<view>重要提示</view>
+					<view>{{noteData.title}}</view>
 				</view>
 				<view class="font-26 pt-2 mx-3">
 					<view class="content ql-editor" style="padding:0;" v-html="noteData.content">
@@ -63,7 +63,7 @@
 						
 					</view>
 				</view>
-				<view class="" style="margin-bottom: 30rpx;color: #888;">联系客服：{{kefuData.phone}}</view>
+				<view class="" style="margin-bottom: 30rpx;color: #888;">联系客服：{{kefuPhone}}</view>
 				<view class="flex1 bT-f5 btn">
 					<view class="w-50 bR-f5" @click="showToast1">我知道了</view>
 					<view class="colorM w-50" @click="phoneCall()">联系客服</view>
@@ -94,7 +94,8 @@
 				text:'倒计时10秒',
 				currentTime:10,
 				hasView:false,
-				tipsData:{}
+				tipsData:{},
+				kefuPhone:''
 			}
 		},
 		onLoad(){
@@ -136,16 +137,32 @@
 				const self = this;
 				const postData = {};
 				postData.tokenFuncName = 'getUserToken';
+				postData.getAfter = {
+					staff:{
+						tableName:'User',
+						middleKey:'staff_no',
+						key:'staff_no',
+						searchItem:{
+							status:1,
+							user_type:1
+						},
+						condition:'='
+					}
+				};
 				var callback = function(res) {
 					if (res.info.data.length > 0) {
-						self.userInfoData = res.info.data[0];
-						if(self.userInfoData.behavior==1){
+						self.userInfoData = res.info.data[0].info;
+						if (self.userInfoData.behavior == 1 || self.userInfoData.user_type == 1) {
 							self.isVip = true
 						};
-						
+						if(res.info.data[0].staff&&res.info.data[0].staff[0]&&res.info.data[0].staff[0].info&&res.info.data[0].staff[0].info.phone!=''){
+							self.kefuPhone = res.info.data[0].staff[0].info.phone
+						}else{
+							self.kefuPhone = uni.getStorageSync('user_info').thirdApp.phone
+						}
 					}
 				}
-				self.$apis.userInfoGet(postData, callback);
+				self.$apis.userGet(postData, callback);
 			},
 			
 			isShow(id) {
@@ -159,7 +176,8 @@
 						}
 					})
 				}else{
-					if(self.userInfoData.deadline>0&&self.userInfoData.deadline>Date.parse(new Date())/1000){
+					self.is_show1 = true;
+					/* if(self.userInfoData.deadline>0&&self.userInfoData.deadline>Date.parse(new Date())/1000){
 						self.$Router.navigateTo({
 							route: {
 								path: '/pages/detail/detail?type=3&id=' + id
@@ -184,7 +202,7 @@
 							}
 						}, 1000);
 						self.is_show = !self.is_show
-					}
+					} */
 					
 				}	
 			},
@@ -194,7 +212,7 @@
 				const postData = {};
 				postData.searchItem = {
 					thirdapp_id: 2,
-					title:'会员提示',
+					title:'普通会员提示',
 					menu_id: 10
 				};
 				var callback = function(res) {
@@ -212,7 +230,7 @@
 				const postData = {};
 				postData.searchItem = {
 					thirdapp_id: 2,
-					title:'重要提示'
+					title:'风险揭示'
 				};
 				var callback = function(res) {
 					if (res.info.data.length > 0) {
@@ -242,7 +260,7 @@
 			phoneCall(){
 				const self = this;
 				uni.makePhoneCall({
-					phoneNumber:self.kefuData.phone
+					phoneNumber:self.kefuPhone
 				})
 			},
 			
@@ -297,7 +315,8 @@
 					if(res.info.data.length > 0){
 						var data = res.info.data;
 						for(var i=0;i<data.length;i++){
-							data[i].create_time = data[i].create_time.substring(0,10);
+							data[i].publish_time = self.$Utils.timeto(data[i].publish_time,'ymd-hms').substring(0,10);
+							/* data[i].create_time = data[i].create_time.substring(0,10); */
 							if(data[i].top === 1 && data[i].menu_id == id){
 								self.topData.push(data[i])
 							}else if(data[i].top === 0){

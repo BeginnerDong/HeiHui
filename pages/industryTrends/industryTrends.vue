@@ -1,30 +1,24 @@
 <template>
 	<view>
 		
-		<view class="p-r"  @click="Router.navigateTo({route:{path:'/pages/serach/serach?type=4'}})">
-			<input type="text" value="" placeholder="搜索你想找的" class="ss"/>
-			<image src="../../static/images/search-icon.png" class="ss-icon p-a"></image>
-		</view>
-		
-		<view class="list flexX">
-			<view class="li" :class="liCurr==index?'on':''" @click="changeLi(index,item.id)"
-			v-for="(item,index) in labelData" :key="index"
-			:style="{width: 100/labelData.length+'%'}">{{item.title}}</view>
-		</view>
-		<view class="f5Bj-H20"></view>
-		
-		<block v-for="(item,index) in mainData" :key="index">
-			<view class="article mt-3 mx-3 shadowM radius10 px-2 py-3 flex1"
-			@click="Router.navigateTo({route:{path:'/pages/detail/detail?type=4&id='+item.id}})">
-				<view style="height: 160rpx;" class="flex5">
-					<view class="tit font-30 flex-1 avoidOverflow3">{{item.title}}</view>
-					<view class="font-24 color9 pt-2">
-						<text class="artSgin">#{{item.label[item.menu_id].title}}</text> {{item.create_time}}
-					</view>
+		<view class="flex3 pt-1" v-for="(item,index) in mainData" :key="index">
+			<view class="pt-3 p-r newDate">
+				<image src="../../static/images/new-icon.png" class="new-icon"></image>
+				<view class="colorf p-a top-0 left-0 right-0 w-100 text-center">
+					<view class="font-32 pt-4">{{Utils.substr(item.menu,0,4)}}</view>
+					<view class="font-20">{{Utils.substr(item.menu,5,10)}}</view>
 				</view>
-				<image src="../../static/images/about-img2.png" class="artImg"></image>
 			</view>
-		</block>
+			<view class="px-3">
+				<block v-for="(c_item,c_index) in item.data" :key="c_index">
+					<view class="newCon py-3 bB-e1"
+					@click="Router.navigateTo({route:{path:'/pages/detail/detail?menu_id=2&id='+c_item.id}})">
+						<view class="font-34 tit avoidOverflow2" style="font-weight: 700;">{{c_item.title}}</view>
+						<image :src="c_item.mainImg[0].url" class="newImg"></image>
+					</view>
+				</block>
+			</view>
+		</view>
 		
 	</view>
 </template>
@@ -33,6 +27,7 @@
 	export default {
 		data() {
 			return {
+				Utils:this.$Utils,
 				Router:this.$Router,
 				liCurr:0,
 				mainData:[],
@@ -46,34 +41,11 @@
 		onLoad(){
 			const self = this;
 			uni.setStorageSync('path','/pages/industryTrends/industryTrends')
-			self.$Utils.loadAll(['getLabelData'], self);
+			self.$Utils.loadAll(['getMainData'], self);
 		},
 		methods: {
 			
-			changeLi(index,id){
-				const self = this;
-				self.liCurr = index;
-				self.searchItem.menu_id = id;
-				self.getMainData(true,id);
-			},
-			
-			getLabelData() {
-				const self = this;
-				const postData = {};
-				postData.searchItem = {
-					parentid : 6
-				}
-				var callback = function(res){
-					if(res.info.data.length > 0){
-						self.labelData =  res.info.data;
-					}
-					console.log('label',self.labelData);
-					self.searchItem.menu_id = self.labelData[0].id;
-					self.getMainData(true,self.labelData[0].id);
-					self.$Utils.finishFunc('getLabelData');
-				}
-				self.$apis.labelGet(postData, callback);
-			},
+
 			
 			getMainData(isNew,id) {
 				const self = this;
@@ -82,11 +54,40 @@
 				};
 				const postData = {};
 				postData.searchItem = self.$Utils.cloneForm(self.searchItem);
+				postData.order = {
+					publish_time:'desc'
+				};
 				var callback = function(res){
-					if(res.info.data.length > 0){
-						self.mainData = res.info.data;
-						console.log('main',self.mainData);
+					if (res.info.data.length > 0) {
+						for (var i = 0; i < res.info.data.length; i++) {
+							res.info.data[i].publish_time = self.$Utils.timeto(res.info.data[i].publish_time,'ymd-hms').substr(0,10)
+							
+							if(self.mainData.length>0){
+								var hasone = false;
+								for(var j =0;j<self.mainData.length;j++){
+									if(res.info.data[i].publish_time==self.mainData[j].menu){
+										self.mainData[j].data.push(res.info.data[i]);
+										hasone = true;
+									};
+								};
+								if(!hasone){
+									self.mainData.push({
+										menu: res.info.data[i].publish_time,
+										data:[res.info.data[i]]
+									});
+								};
+							}else{
+								self.mainData.push({
+									menu: res.info.data[i].publish_time,
+									data:[res.info.data[i]]
+								})
+							};
+						};
+						console.log(self.mainData)
+						
+						//self.mainData.push.apply(self.mainData,res.info.data)
 					}
+					
 					self.$Utils.finishFunc('getMainData');
 				}
 				self.$apis.articleGet(postData, callback);
@@ -98,6 +99,7 @@
 </script>
 
 <style scoped>
-.li{padding: 0 30rpx;flex-shrink: 0;}
-.trustImg{width: 690rpx;height: 340rpx;}
+.newDate{width: 130rpx;}
+.newCon .tit{width: 560rpx;}
+.newImg{width: 100%;height: 300rpx;margin-top: 20rpx;}
 </style>

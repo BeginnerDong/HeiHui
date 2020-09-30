@@ -29,10 +29,14 @@
 					<image :src="c_item.orderItem&&c_item.orderItem[0]&&c_item.orderItem[0].snap_product&&c_item.orderItem[0].snap_product.product&&
 								c_item.orderItem[0].snap_product.product.mainImg&&c_item.orderItem[0].snap_product.product.mainImg[0]?c_item.orderItem[0].snap_product.product.mainImg[0].url:''" class="myorederImg"></image>
 					<view class="myCon pl-2 flex5">
-						<view class="tit avoidOverflow2 pb-1">{{c_item.orderItem&&c_item.orderItem[0]&&c_item.orderItem[0].snap_product&&c_item.orderItem[0].snap_product.product?c_item.orderItem[0].snap_product.product.title:''}}</view>
-						<view class="font-22 color6 line-h flex-1">规格：
-						{{c_item.orderItem&&c_item.orderItem[0]&&c_item.orderItem[0].snap_product&&c_item.orderItem[0].snap_product?c_item.orderItem[0].snap_product.title:''}}</view>
-						<view class="font-24" v-if="item.order_step>0">退款金额: <text class="font-32 colorR">¥78.8</text></view>
+						<view class="tit avoidOverflow2 " style="margin-bottom: 33px;">
+						{{c_item.orderItem&&c_item.orderItem[0]&&c_item.orderItem[0].snap_product&&c_item.orderItem[0].snap_product.product?c_item.orderItem[0].snap_product.product.title:''}}
+					</view>
+						<view class="font-22 color6 line-h flex-1">
+							
+							<span v-for="(cc_item,key,cc_index) in c_item.orderItem[0].snap_product.label_description" :key="key">{{key}}:{{cc_item}}</span>
+						</view>
+						<view class="font-24" v-if="item.order_step>0">退款金额: <text class="font-32 colorR">¥{{item.price}}</text></view>
 					</view>
 					<view>
 						<view class="price1">{{c_item.unit_price}}</view>
@@ -95,10 +99,7 @@
 		onLoad(options) {
 			const self = this;
 			if(options.id){
-				self.changeLi(options.id)
-			}else{
-				self.liCurr = 0;
-				self.$Utils.loadAll(['getMainData'], self);
+				self.id = options.id
 			}
 			self.paginate = self.$Utils.cloneForm(self.$AssetsConfig.paginate);
 		},
@@ -109,6 +110,16 @@
 				self.paginate.currentPage++;
 				self.getMainData()
 			};
+		},
+		
+		onShow() {
+			const self = this;
+			if(self.id){
+				self.changeLi(self.id)
+			}else{
+				self.liCurr = 0;
+				self.$Utils.loadAll(['getMainData'], self);
+			}
 		},
 		
 		methods: {
@@ -183,7 +194,7 @@
 						self.searchItem.transport_status = 2;
 						self.searchItem.order_step = 0
 					}else if(self.liCurr==4){
-						self.searchItem.order_step > 0
+						self.searchItem.order_step = ['>',0]
 					}
 					self.getMainData(true)
 				}

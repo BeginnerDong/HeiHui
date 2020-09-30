@@ -21,10 +21,12 @@
 						<image :src="item.product&&item.product.mainImg&&item.product.mainImg[0]?item.product.mainImg[0].url:''" class="shopImg"></image>
 						<view class="shopCon d-flex flex-column flex-1 pl-2">
 							<view class="tit avoidOverflow2 pb-2 flex-1">{{item.product&&item.product.title?item.product.title:''}}</view>
-							<view class="font-22 color6 line-h pb-1">规格：{{item.product&&item.product.sku&&item.product.sku[item.skuIndex]?item.product.sku[item.skuIndex].title:''}}</view>
-							<view class="colorR font-32">
-								<text class="price1 font-w pb-2">{{item.product&&item.product.sku&&item.product.sku[item.skuIndex]?item.product.sku[item.skuIndex].o_price:''}}</text>/
-								<text class="priceV font-w">{{item.product&&item.product.sku&&item.product.sku[item.skuIndex]?item.product.sku[item.skuIndex].price:''}}</text>
+							<view class="font-22 color6 line-h pb-1">
+								<span v-for="(c_item,key,c_index) in item.product.sku[item.skuIndex].label_description" :key="key">{{key}}:{{c_item}}</span>
+							</view>
+							<view class="colorR">
+								<text class="price1 font-w pb-2 font-32">{{item.product&&item.product.sku&&item.product.sku[item.skuIndex]?item.product.sku[item.skuIndex].o_price:''}}</text>
+								<text class="priceV font-w font-28"  style="color: #000000;margin-left: 10rpx;">{{item.product&&item.product.sku&&item.product.sku[item.skuIndex]?item.product.sku[item.skuIndex].price:''}}</text>
 							</view>
 						</view>
 						
@@ -58,18 +60,30 @@
 		<!-- 提示 -->
 		<view class="bg-mask" v-show="is_show">
 			<view class="bg-white p-a radius10 text-center tc">
-				<view class="txt">订单提交成功，后期将会有专属的客服联系您的！</view>
+				<view class="txt">
+					<view class="content ql-editor text-center" style="padding:0;" v-html="orderTipData.content">
+					</view>
+				</view>
+				<view class="pb-2">
+					<view  @click="phoneCall1(item)" style="margin-top: 10rpx;" v-for="(item,index) in phoneArray" :key="index">
+						客服电话:{{item}}
+					</view>
+				</view>
 				<view class="flex1 bT-f5 btn">
-					<view class="w-50 bR-f5" @click="showToast">我知道了</view>
-					<view class="colorM w-50" @click="Router.navigateTo({route:{path:'/pages/shop-index/shop-index'}})">再去逛逛</view>
+					<view class="w-50 bR-f5" @click="Router.redirectTo({route:{path:'/pages/shop-userOrder/shop-userOrder'}})">我知道了</view>
+					<view class="colorM w-50" @click="phoneCall()">联系客服</view>
 				</view>
 			</view>
 		</view>
 		
 		<view class="bg-mask" v-show="is_show1">
 			<view class="bg-white p-a radius10 text-center tc">
-				<view class="txt">很抱歉，您还不是恒辉财富会员</view>
-				<view class="" style="margin-bottom: 30rpx;color: #888;">联系客服：{{kefuData.phone}}</view>
+				<view class="txt">
+					<view class="content ql-editor text-center" style="padding:0;" v-html="tipsData.content">
+					</view>
+				</view>
+				
+				<view class="" style="margin-bottom: 30rpx;color: #888;"  @click="phoneCall1(item)" v-for="(item,index) in phoneArray" :key="index">联系客服：{{item}}</view>
 				<view class="flex1 bT-f5 btn">
 					<view class="w-50 bR-f5" @click="showToast1">我知道了</view>
 					<view class="colorM w-50" @click="phoneCall()">联系客服</view>
@@ -89,9 +103,13 @@
 				mainData:{},
 				totle:0,
 				addressData:{},
-				is_show1:true,
+				is_show1:false,
 				passage2:'',
-				kefuData:{}
+				kefuData:{},
+				tipsData: {},
+				totalPrice:0,
+				orderTipData:{},
+				phoneArray:[]
 			}
 		},
 		
@@ -99,15 +117,20 @@
 		
 		onLoad(options) {
 			const self = this;
+			uni.removeStorageSync('choosedAddressData');
 			self.mainData = uni.getStorageSync('payPro');
 			self.getKefuData();
 			self.getUserInfoData()
+			self.getTipsData();
+			self.getOrderTipData();
+			
 		},
 		
 		onShow() {
 			const self = this;
 			if(uni.getStorageSync('choosedAddressData')){
 				self.addressData = uni.getStorageSync('choosedAddressData')
+				
 			}else{
 				self.getAddressData()
 			};
@@ -118,8 +141,50 @@
 			phoneCall(){
 				const self = this;
 				uni.makePhoneCall({
-					phoneNumber:self.kefuData.phone
+					phoneNumber:self.phoneArray[0]
 				})
+			},
+			
+			phoneCall1(item){
+				const self = this;
+				uni.makePhoneCall({
+					phoneNumber:item
+				})
+			},
+			
+			getOrderTipData() {
+				const self = this;
+				const postData = {};
+				postData.searchItem = {
+					thirdapp_id: 2,
+					title: '订单提交提示',
+					menu_id: 10
+				};
+				var callback = function(res) {
+					if (res.info.data.length > 0) {
+						self.orderTipData = res.info.data[0]
+					}
+					self.$Utils.finishFunc('getOrderTipData');
+				}
+				self.$apis.articleGet(postData, callback);
+			},
+			
+			getTipsData() {
+				const self = this;
+				const postData = {};
+				postData.searchItem = {
+					thirdapp_id: 2,
+					title: '普通会员提示（商城）',
+					menu_id: 10
+				};
+				var callback = function(res) {
+					if (res.info.data.length > 0) {
+						self.tipsData = res.info.data[0]
+					}
+					console.log('menu', self.tipsData)
+					self.$Utils.finishFunc('getTipsData');
+				}
+				self.$apis.articleGet(postData, callback);
 			},
 			
 			getKefuData() {
@@ -140,7 +205,7 @@
 			
 			submit(){
 				const self = this;
-				if(self.userInfoData.behavior==1){
+				if(self.userInfoData.behavior==1||self.userInfoData.user_type==1){
 					self.addOrder()
 				}else{
 					self.is_show1 = true
@@ -166,7 +231,7 @@
 				postData.orderList = self.$Utils.cloneForm(orderList);
 				postData.data = {
 					level:1,
-					pay_status:1,
+					//pay_status:1,
 					snap_address:self.addressData,
 					passage2:self.passage2
 				};
@@ -205,14 +270,31 @@
 				const self = this;
 				const postData = {};
 				postData.tokenFuncName = 'getUserToken';
+				postData.getAfter = {
+					staff:{
+						tableName:'User',
+						middleKey:'staff_no',
+						key:'staff_no',
+						searchItem:{
+							status:1,
+							user_type:1
+						},
+						condition:'='
+					}
+				};
 				var callback = function(res){
 					if(res.info.data.length > 0){
-						self.userInfoData = res.info.data[0];
+						self.userInfoData = res.info.data[0].info;
+						if(res.info.data[0].staff&&res.info.data[0].staff[0]&&res.info.data[0].staff[0].info&&res.info.data[0].staff[0].info.phone!=''){
+							self.phoneArray.push(res.info.data[0].staff[0].info.phone)
+						}else{
+							self.phoneArray.push(uni.getStorageSync('user_info').thirdApp.phone) 
+						}
 						self.countTotalPrice()
 					}
 					self.$Utils.finishFunc('getUserData');
 				}
-				self.$apis.userInfoGet(postData, callback);
+				self.$apis.userGet(postData, callback);
 			},
 			
 			

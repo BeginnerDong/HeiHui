@@ -71,8 +71,8 @@
             "https" : false
         },
         "router" : {
-            "base" : "/henghuiweb/"
+            "base" : "/h5/"
         },
-        "domain" : "https://test.solelyfinance.com"
+        "domain" : "http://szegam.com"
     }
 }

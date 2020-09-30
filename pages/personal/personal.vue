@@ -3,6 +3,7 @@
 		
 		<view class="p-r colorf">
 			<image src="../../static/images/personal center-img.png" class="perBg"></image>
+			
 			<view class="flex1 h-100 p-a top-0 px-3">
 				<image style="border-radius: 50%;overflow: hidden;" :src="userData.headImgUrl?userData.headImgUrl:'../../static/images/head.png'" class="userImg"></image>
 				<view class="flex-1 font-32 pl-2">{{userData?userData.nickname:''}}</view>
@@ -11,6 +12,7 @@
 				<image src="../../static/images/personal center-icon.png" class="per-icon"></image>
 				<view class="font-24 pt-1">编辑</view>
 			</view>
+			
 		</view>
 		
 		<view class="list">
@@ -21,12 +23,12 @@
 		<view v-show="liCurr==0">
 			<view class="article mt-3 mx-3 shadowM radius10 px-2 py-3 flex1" 
 			v-for="(item,index) in mainData" :key="index"
-			@click="Router.navigateTo({route:{path:'/pages/detail/detail?menu_id=2&id='+item.id}})">
+			@click="Router.navigateTo({route:{path:'/pages/detail/detail?menu_id=2&id='+item.article[0].id}})">
 				<view class="flex5" style="height: 160rpx;">
 					<view class="tit font-30 avoidOverflow3">{{item.article&&item.article[0]?item.article[0].title:''}}</view>
 					<view class="font-24 color9 pt-2">
 						<!-- <text class="artSgin">#</text> -->
-						{{item.article&&item.article[0]?item.article[0].create_time:''}}
+						{{item.article&&item.article[0]?item.article[0].publish_time:''}}
 					</view>
 				</view>
 				<image :src="item.article&&item.article[0]&&item.article[0].mainImg&&item.article[0].mainImg[0]?item.article[0].mainImg[0].url:'../../static/images/null.png'" class="artImg"></image>
@@ -72,7 +74,9 @@
 		</view>
 		
 		
-		
+		<view @click="loginOff" class="addBto text-center flex0 colorM line-h bT-f5" style="position: fixed;bottom: 0;width: 100%;height: 100rpx;background-color: #E39423;color: #fff;">
+			<view>退出登录</view>
+		</view>
 		
 		<!-- 重要提示 -->
 		<view class="bg-mask" v-show="is_show">
@@ -138,6 +142,14 @@
 		},
 		
 		methods: {
+			
+			loginOff(){
+				const self = this;
+				uni.removeStorageSync('user_info');
+				uni.removeStorageSync('user_token');
+				self.Router.redirectTo({route:{path:'/pages/login-register/login-register'}})
+			},
+			
 			changeLi(i){
 				const self = this;
 				if(self.liCurr!=i){
@@ -198,6 +210,11 @@
 				var callback = function(res){
 					if(res.info.data.length > 0){
 						self.mainData.push.apply(self.mainData,res.info.data)
+						for (var i = 0; i < self.mainData.length; i++) {
+							if(self.mainData[i].article&&self.mainData[i].article[0]){
+								self.mainData[i].article[0].publish_time = self.$Utils.timeto(self.mainData[i].article[0].publish_time,'ymd-hms').substr(0,10)
+							}
+						}
 					}
 					self.$Utils.finishFunc('getMainData');
 				}

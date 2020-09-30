@@ -1,9 +1,20 @@
 <template>
-	<view>
+	<view class="px-3">
 		
 		<!-- <image src="../../static/images/jianjie-img.png" class="img"></image> -->
-		
-		<image :src="mainData&&mainData.mainImg&&mainData.mainImg[0]&&mainData.mainImg[0].url" mode="widthFix"></image>
+		<view class="pt-3">
+			<video :src="mainData&&mainData.bannerImg&&mainData.bannerImg[0]&&mainData.bannerImg[0].url"
+			v-show="mainData&&mainData.bannerImg&&mainData.bannerImg[0]&&mainData.bannerImg[0].url"
+			controls></video>
+			<view class="pt-3 font-26">
+				
+				<div class="content ql-editor"   @click="getImg($event)" style="padding:0" v-html="mainData.content" >
+					
+					
+				</div>
+			</view>
+		</view>
+		<!-- <image :src="mainData&&mainData.mainImg&&mainData.mainImg[0]&&mainData.mainImg[0].url" @click="getUrl(mainData.mainImg[0].url)" mode="widthFix"></image> -->
 		
 		<!-- <view class="p-r item">
 			<image src="../../static/images/jianjie-img4.png" class="bg-txt"></image>
@@ -45,7 +56,7 @@
 			</view>
 		</view> -->
 		
-		<view class="p-r item">
+		<!-- <view class="p-r item">
 			<view class="flex0 pt-3 z-index10 p-r">
 				<image src="../../static/images/jianjie-icon.png" class="jj-icon"></image>
 				<view class="color2 font-44 font-w text-center px-2">联系我们</view>
@@ -66,15 +77,21 @@
 				</view>
 				<view class="btn600" @click="successSubmit">确定</view>
 			</view>
-		</view>
+		</view> -->
 		
-		<image src="../../static/images/jianjie-img2.png" class="img3"></image>
-		
+		<!-- <image src="../../static/images/jianjie-img2.png" class="img3"></image> -->
+		<template>
+		    <view>
+		        <previewImage ref="previewImage" :opacity="1" :imgs="param"></previewImage>
+		    </view>
+		</template>
 	</view>
 </template>
 
 <script>
+	import previewImage from '@/components/kxj-previewImage/kxj-previewImage.vue';
 	export default {
+		components: { previewImage}, //注册插件
 		data() {
 			return {
 				mainData:{},
@@ -82,16 +99,65 @@
 					title:'',
 					phone:'',
 					content:''
-				}
+				},
+				param:[]
 			}
 		},
 		onLoad(){
 			const self = this;
+			window.getImg = function($event){
+				console.log($event);
+				self.$jweixin.previewImage({
+					current:0,
+					urls:[$event.target.currentSrc]
+				})
+			};
 			uni.setStorageSync('path','/pages/introduction/introduction')
-			self.$Utils.loadAll(['getMainData','getUserData'], self);
+			self.$Utils.loadAll(['wxJsSdk','getMainData','getUserData'], self);
 		},
 		
 		methods: {
+			
+			getImg($event){
+				
+			},
+			
+			wxJsSdk() {
+				const self = this;
+				const postData = {
+					thirdapp_id: 2,
+					url: location.href.split('#')[0]
+				};
+				const callback = (res) => {
+					self.$jweixin.config({
+						debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+						appId: res.appId, // 必填，公众号的唯一标识
+						timestamp: res.timestamp, // 必填，生成签名的时间戳
+						nonceStr: res.nonceStr, // 必填，生成签名的随机串
+						signature: res.signature, // 必填，签名
+						jsApiList: ['scanQRCode','previewImage'] // 必填，需要使用的JS接口列表
+					});
+					self.$jweixin.ready(function() { //需在用户可能点击分享按钮前就先调用
+					});
+					self.$jweixin.error(function(res) {
+						console.log('error', res)
+					});
+					self.$Utils.finishFunc('wxJsSdk');
+					console.log(self.$jweixin)
+				};
+				self.$apis.WxJssdk(postData, callback);
+			},
+			
+			getUrl(url){
+				const self = this;
+				self.param = [url];
+				var param = url;
+				console.log(param);
+				
+				self.$refs.previewImage.open(param); // 传入当前选中的图片地址或序号
+			},
+			
+			
 			
 			getUserData() {
 				const self = this;
@@ -163,6 +229,8 @@
 				var callback = function(res){
 					if(res.info.data.length > 0){
 						self.mainData = res.info.data[0];
+						const regex = new RegExp('<img', 'gi');
+						self.mainData.content = self.mainData.content.replace(regex, `<img onclick='self.getImg(event)'"`);
 					}
 					self.$Utils.finishFunc('getMainData');
 				}

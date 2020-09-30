@@ -3,11 +3,11 @@
 		
 		<view class="mx-3 py-4 flex3 bB-f5" v-for="(item,index) in mainData" :key="index">
 			<view class="pr-5">
-				<view class="font-30">{{item.name}}</view>
-				<view class="mrSgin" v-if="item.isdefault==1">默认</view>
+				<view class="font-30" @click="choose(index)">{{item.name}}</view>
+				<view class="mrSgin" @click="choose(index)" v-if="item.isdefault==1">默认</view>
 			</view>
 			<view class="flex-1 flex1">
-				<view class="flex-1">
+				<view class="flex-1" @click="choose(index)">
 					<view>{{item.phone}}</view>
 					<view class="color6 address">{{item.city+item.detail}}</view>
 				</view>

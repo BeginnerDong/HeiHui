@@ -263,7 +263,7 @@
 				const callback = (data) => {
 					uni.setStorageSync('canClick', true);
 					if (data && data.solely_code == 100000) {
-						self.$Utils.showToast('修改成功','success');
+						self.$Utils.showToast('操作成功','success');
 						setTimeout(function() {
 							uni.navigateBack({
 								delta:1
@@ -297,7 +297,7 @@
 							})
 						}, 1000);
 					} else {
-						self.$Utils.showToast(data.msg,'success')
+						self.$Utils.showToast(data.msg,'none')
 					}
 					
 				};
@@ -309,7 +309,7 @@
 				const self = this;
 				
 				var newObject = self.$Utils.cloneForm(self.submitData);
-				delete newObject.default;
+				delete newObject.isdefault;
 				const pass = self.$Utils.checkComplete(newObject);
 
 				console.log('self.data.sForm', self.submitData)
@@ -327,7 +327,7 @@
 			
 				} else {
 					uni.setStorageSync('canClick', true);
-					self.$Utils.showToast('请补全信息','success');
+					self.$Utils.showToast('请补全信息','none');
 				};
 			},
 

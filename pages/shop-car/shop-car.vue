@@ -16,9 +16,9 @@
 					<view class="shopCon d-flex flex-column flex-1">
 						<view class="tit avoidOverflow pb-2">{{item.title}}</view>
 						<view class="font-22 color6 line-h flex-1">规格：{{item.sku&&item.sku[item.skuIndex]?item.sku[item.skuIndex].title:''}}</view>
-						<view class="colorR font-32">
-							<text class="price1 font-w pb-2">{{item.sku&&item.sku[item.skuIndex]?item.sku[item.skuIndex].o_price:''}}</text>/
-							<text class="priceV font-w">{{item.sku&&item.sku[item.skuIndex]?item.sku[item.skuIndex].price:''}}</text>
+						<view class="colorR ">
+							<text class="price1 font-w pb-2 font-32">{{item.sku&&item.sku[item.skuIndex]?item.sku[item.skuIndex].o_price:''}}</text>
+							<text class="priceV font-w font-28" style="color: #000000;margin-left: 10rpx;">{{item.sku&&item.sku[item.skuIndex]?item.sku[item.skuIndex].price:''}}</text>
 						</view>
 					</view>
 				</view>

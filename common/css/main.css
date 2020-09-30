@@ -63,7 +63,7 @@ uni-button:after{border: 0;}
 .price::before{content: "￥";}
 .price1::before{content: "￥";font-size: 22rpx;}
 .priceV{ color: #ED1717;}
-.priceV::before{content: "会员:";font-size: 22rpx;}
+.priceV::before{content: "VIP:";font-size: 22rpx;}
 .priceIcon{width: 28rpx;height: 28rpx;margin-right: 8rpx;}
 .priceF{ color: #ED1717;}
 .priceF::before{content: "积分:";font-size: 24rpx;}
@@ -92,7 +92,9 @@ uni-button:after{border: 0;}
 .hotBg{width: 176rpx;height: 206rpx;position: absolute;right: -30rpx;top: 70rpx;}
 .zdSgin{width: 60rpx;line-height: 32rpx;background: -webkit-linear-gradient(top,rgb(237,23,23),rgb(251,89,89));text-align: center;height: 32rpx;border-radius: 4rpx;margin-top: 6rpx;}
 .hotSgin{width: 60rpx;line-height: 32rpx;background: -webkit-linear-gradient(top,rgb(227,148,35),rgb(244,179,85));text-align: center;height: 32rpx;border-radius: 4rpx;margin-top: 6rpx;}
+.yxSgin{width: 60rpx;line-height: 32rpx;background: -webkit-linear-gradient(top,rgb(30,144,255),rgb(0,191,255));text-align: center;height: 32rpx;border-radius: 4rpx;margin-top: 6rpx;}
 .qySgin{background: #E39423;text-align: center;width: 140rpx;height: 46rpx;line-height: 46rpx;border-top-left-radius: 23rpx;border-bottom-left-radius: 23rpx;position: absolute;right: 0;}
+.sqSgin{width: 60rpx;line-height: 32rpx;background: #888888;text-align: center;height: 32rpx;border-radius: 4rpx;margin-top: 6rpx;}
 
 /* 底部 */
 .footer{height: 100rpx;width:100%;border-top: 1px solid #e1e1e1;position: fixed;bottom: 0;display: flex;justify-content: space-between;background-color: #fff;padding-bottom: 10rpx;box-sizing: content-box;z-index: 1000;}

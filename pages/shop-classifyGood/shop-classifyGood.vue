@@ -3,14 +3,16 @@
 		
 		<view class="good flex1 px-3 pt-4 pb-3 bB-f5"
 		v-for="(item,index) in mainData" :key="index"
-		@click="goDetail(item)">
-			<image :src="item.mainImg[0].url" class="goodImg radius10"></image>
+		:data-id="item.id"
+		@click="Router.navigateTo({route:{path:'/pages/shop-detail/shop-detail?id='+$event.currentTarget.dataset.id}})">
+			<image :src="item.mainImg&&item.mainImg[0]?item.mainImg[0].url:''" class="goodImg radius10"></image>
 			<view class="flex-1 pl-2">
 				<view class="font-30 flex-1 pb-4 avoidOverflow2">{{item.title}}</view>
 				<view class="line-h flex1 pt-4">
-					<view class="colorR font-32">
-						<text class="price1 font-w pb-2">{{item.sku[0].o_price}}</text>/
-						<text class="priceV font-w">{{item.sku[0].price}}</text>
+					
+					<view class="">
+						<text class="price1 font-w  font-30">{{item.sku&&item.sku[0]?item.sku[0].o_price:''}}</text>
+						<text class="font-w font-24 priceV"  style="color: #000000;margin-left:20rpx;">¥{{item.sku&&item.sku[0]?item.sku[0].price:''}}</text>
 					</view>
 					<view class="font-20 color9">销量 {{item.sale_count}}</view>
 				</view>
@@ -57,7 +59,7 @@
 			goDetail(item){
 				const self = this;
 				uni.setStorageSync('productDetail',item)
-				self.Router.navigateTo({route:{path:'/pages/shop-detail/shop-detail'}})
+				self.Router.navigateTo({route:{path:'/pages/shop-detail/shop-detail?id='+item.id}})
 			},
 			
 			getMainData(isNew) {

@@ -49,6 +49,11 @@
 			orderUpdate() {
 				const self = this;
 				uni.setStorageSync('canClick', false);
+				if(self.submitData.passage1==''){
+					uni.setStorageSync('canClick', true);
+					self.$Utils.showToast('请输入退款原因','none');
+					return
+				}
 				const postData = {};
 				postData.tokenFuncName = 'getUserToken';
 				postData.data = {

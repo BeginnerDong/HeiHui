@@ -89,7 +89,7 @@
         ,{
             "path" : "pages/shop-index/shop-index",
             "style" : {
-							"navigationBarTitleText": "生活商品"
+							"navigationBarTitleText": "生活商城"
 						}
         }
         ,{

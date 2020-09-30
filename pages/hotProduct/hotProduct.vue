@@ -10,7 +10,7 @@
 			<view class="flex4" @click="changeNav(1)" :class="navCurr==1?'on':''">
 				<image src="../../static/images/product-icon13.png" class="hot-icon" v-if="navCurr==1"></image>
 				<image src="../../static/images/product-icon1.png" class="hot-icon" v-else></image>
-				<view>房地产投资</view>
+				<view>地产投资</view>
 			</view>
 			<view class="flex4" @click="changeNav(2)" :class="navCurr==2?'on':''">
 				<image src="../../static/images/product-icon15.png" class="hot-icon" v-if="navCurr==2"></image>
@@ -32,106 +32,48 @@
 
 
 		<view>
-			<!-- 置顶 -->
-			<view class="hot m-3 shadowM radius10 overflow-h font-24 p-r bg-white" 
-			v-if="topData.title" @click="isShow(topData.id)">
-				<image src="../../static/images/product-icon11.png" class="hotBg"></image>
-				<view class="colorf d-flex px-2 p-r py-4 borderDB">
-					<view class="font-22 zdSgin">置顶</view>
-					<view class="font-32 color2 pl-1 tit">{{topData.title}}</view>
-					<view class="qySgin">{{topData.label[topData.menu_id].title}}</view>
-				</view>
-				<view class="flex3 pt-5 px-2 pb-4">
-					<view class="flex4">
-						<view class="flex1 pb-1">
-							<image src="../../static/images/product-icon5.png" class="yq-icon"></image>
-							<view>预期收益最高可达</view>
-						</view>
-						<view class="colorR font-50 font-w">{{topData.small_title}}</view>
-					</view>
-					<view class="flex4">
-						<view class="flex1 pb-2">
-							<image src="../../static/images/product-icon6.png" class="yq-icon1"></image>
-							<view>项目期限(月)</view>
-						</view>
-						<view class="font-40">{{topData.keywords}}</view>
-					</view>
-					<view class="flex4">
-						<view class="flex1 pb-2">
-							<image src="../../static/images/product-icon7.png" class="yq-icon1"></image>
-							<view>起投金额(万)</view>
-						</view>
-						<view class="font-40">{{topData.description}}</view>
-					</view>
-				</view>
-			</view>
-			<!-- 热门 -->
-			<view class="hot m-3 shadowM radius10 overflow-h font-24 p-r bg-white"  
-			v-if="hotData.title"  @click="isShow(hotData.id,'if')"
-			:class="isVip?'':'mhBox'">
-				<!-- <view class="hot-mask" v-show="!isVip"></view> -->
-				<image src="../../static/images/product-icon11.png" class="hotBg"></image>
-				<view class="colorf d-flex px-2 p-r py-4 borderDB">
-					<view class="font-22 hotSgin">热门</view>
-					<view class="font-32 color2 pl-1 tit">{{hotData.title}}</view>
-					<view class="qySgin">{{hotData.label[hotData.menu_id].title}}</view>
-				</view>
-				<view class="flex3 pt-5 px-2 pb-4">
-					<view class="flex4">
-						<view class="flex1 pb-1">
-							<image src="../../static/images/product-icon5.png" class="yq-icon"></image>
-							<view>预期收益最高可达</view>
-						</view>
-						<view class="colorR font-50 font-w" :class="isVip?'':'mh'">{{hotData.small_title}}</view>
-					</view>
-					<view class="flex4">
-						<view class="flex1 pb-2">
-							<image src="../../static/images/product-icon6.png" class="yq-icon1"></image>
-							<view>项目期限(月)</view>
-						</view>
-						<view class="font-40" :class="isVip?'':'mh'">{{hotData.keywords}}</view>
-					</view>
-					<view class="flex4">
-						<view class="flex1 pb-2">
-							<image src="../../static/images/product-icon7.png" class="yq-icon1"></image>
-							<view>起投金额(万)</view>
-						</view>
-						<view class="font-40" :class="isVip?'':'mh'">{{hotData.description}}</view>
-					</view>
-				</view>
-			</view>
 			<!-- 其他 -->
 			<view class="hot m-3 shadowM radius10 overflow-h font-24 p-r bg-white" 
-			@click="isShow(item.id,'if')" v-for="(item,index) in mainData"
+			@click="toDetail(index)" v-for="(item,index) in mainData"
 			:key="index"
-			:class="isVip?'':'mhBox'">
+			:class="isVip||item.top==1||userInfoData.deadline>Date.parse(new Date())/1000?'':'mhBox'">
 				<!-- <view class="hot-mask" v-show="!isVip"></view> -->
 				<image src="../../static/images/product-icon11.png" class="hotBg"></image>
-				<view class="colorf d-flex px-2 p-r py-4 borderDB">
-					<view class="font-32 color2 pl-1 tit">{{item.title}}</view>
+				<view class="colorf d-flex px-2 p-r py-2 ">
+					<view class="font-22 sqSgin" v-if="item.sellout==1">售罄</view>
+					<view class="font-22 hotSgin" style="margin-left: 10rpx;" v-if="item.hot==1">热门</view>
+					<view class="font-22 zdSgin" style="margin-left: 10rpx;" v-if="item.top==1">置顶</view>
+					<view class="font-22 yxSgin" style="margin-left: 10rpx;width: 90rpx;" v-if="item.run_status==0">运行中</view>
+					<view class="font-22 zdSgin" style="margin-left: 10rpx;width: 90rpx;" v-if="item.run_status==1">募集中</view>
+					<view class="font-22 sqSgin" style="margin-left: 10rpx;width: 90rpx;" v-if="item.run_status==2">已退出</view>
+					
 					<view class="qySgin">{{item.label[item.menu_id].title}}</view>
 				</view>
+				<view class="colorf d-flex px-2 p-r pb-2  borderDB">
+					<view class="font-32 color2 pl-1">{{item.title}}</view>
+				</view>
+				
 				<view class="flex3 pt-5 px-2 pb-4">
 					<view class="flex4">
 						<view class="flex1 pb-1">
 							<image src="../../static/images/product-icon5.png" class="yq-icon"></image>
-							<view>预期收益最高可达</view>
+							<view>业绩比较基准</view>
 						</view>
-						<view class="colorR font-50 font-w" :class="isVip?'':'mh'">{{item.small_title}}</view>
+						<view class="colorR font-50 font-w" :class="isVip||item.top==1||userInfoData.deadline>Date.parse(new Date())/1000?'':'mh'">{{item.small_title}}</view>
 					</view>
 					<view class="flex4">
 						<view class="flex1 pb-2">
 							<image src="../../static/images/product-icon6.png" class="yq-icon1"></image>
-							<view>项目期限(月)</view>
+							<view>期限(月)</view>
 						</view>
-						<view class="font-40" :class="isVip?'':'mh'">{{item.keywords}}</view>
+						<view class="font-40" :class="isVip||item.top==1||userInfoData.deadline>Date.parse(new Date())/1000?'':'mh'">{{item.keywords}}</view>
 					</view>
 					<view class="flex4">
 						<view class="flex1 pb-2">
 							<image src="../../static/images/product-icon7.png" class="yq-icon1"></image>
 							<view>起投金额(万)</view>
 						</view>
-						<view class="font-40" :class="isVip?'':'mh'">{{item.description}}</view>
+						<view class="font-40" :class="isVip||item.top==1||userInfoData.deadline>Date.parse(new Date())/1000?'':'mh'">{{item.description}}</view>
 					</view>
 				</view>
 			</view>
@@ -143,22 +85,22 @@
 		<!-- 重要提示 -->
 		<view class="bg-mask" v-show="is_show">
 			<view class="bg-white p-r overflow-h tips">
-				<image src="../../static/images/product-icon8.png" class="x-icon" @click="close()"></image>
-				<view class="flex0 font-30 font-w pb-5 pt-3 mx-3">
+				<image src="../../static/images/product-icon8.png" class="x-icon" style="margin: 20px;" @click="close()"></image>
+				<view class="flex0 font-30 font-w pb-3 pt-3 a-center" style="border-bottom: 1px solid #E5E5E5;">
 					<image src="../../static/images/product-icon9.png" class="tips-icon"></image>
-					<view>重要提示</view>
+					<view>{{noteData.title}}</view>
 				</view>
-				<view class="font-26 pt-2 mx-3">
+				<view class="font-26 pt-2 mx-3" style="overflow-y: auto;height: 500px;padding-bottom: 150px;">
 					<view class="content ql-editor" style="padding:0;" v-html="noteData.content">
 						
 					</view>
 				</view>
 				<view class="p-a bottom-0 left-0 right-0">
-					<view class="colorf font-24 pb-1">
+					<!-- <view class="colorf font-24 pb-1">
 						<image src="../../static/images/product-icon10.png" class="tips-icon1"></image>
 						<view class="time">{{text}}</view>
-					</view>
-					<view class="tipBtn" @click="toDetail()" :style="hasView?'background:#E39423':'background:#999'">确定</view>
+					</view> -->
+					<view class="tipBtn" @click="close()" style="background:#E39423">确定</view>
 				</view>
 			</view>
 		</view>
@@ -170,7 +112,7 @@
 						
 					</view>
 				</view>
-				<view class="" style="margin-bottom: 30rpx;color: #888;">联系客服：{{kefuData.phone}}</view>
+				<view class="" style="margin-bottom: 30rpx;color: #888;">联系客服：{{kefuPhone}}</view>
 				<view class="flex1 bT-f5 btn">
 					<view class="w-50 bR-f5" @click="showToast1">我知道了</view>
 					<view class="colorM w-50" @click="phoneCall()">联系客服</view>
@@ -188,7 +130,7 @@
 		data() {
 			return {
 				navCurr: 0,
-				is_show: false,
+				is_show: true,
 				is_show1:false,
 				mainData: [],
 				topData: [],
@@ -219,7 +161,9 @@
 					type:2
 				},
 				kefuData:{},
-				tipsData:{}
+				tipsData:{},
+				kefuPhone:'',
+				userInfoData:{}
 			}
 		},
 		onLoad() {
@@ -265,7 +209,7 @@
 			phoneCall(){
 				const self = this;
 				uni.makePhoneCall({
-					phoneNumber:self.kefuData.phone
+					phoneNumber:self.kefuPhone
 				})
 			},
 			
@@ -277,30 +221,35 @@
 			close(){
 				const self = this;
 				self.is_show = false
-				clearInterval(self.interval)
+				//clearInterval(self.interval)
 			},
 			
-			toDetail(){
+			toDetail(index){
 				const self = this;
-				if(self.hasView){
-					self.is_show = false;
-					self.text = '倒计时10秒';
-					const postData = {};
-					postData.tokenFuncName = 'getUserToken';
-					postData.data = {
-						deadline:Date.parse(new Date())/1000 + uni.getStorageSync('user_info').thirdApp.temporary*60 
-					};
-					var callback = function(res) {
-						if (res.solely_code == 100000) {
-							self.$Router.navigateTo({
-								route: {
-									path: '/pages/detail/detail?type=2&id=' + self.willId
-								}
-							})
+				self.is_show = false;
+				self.willId = self.mainData[index].id;
+				if(self.isVip){
+					self.$Router.navigateTo({
+						route: {
+							path: '/pages/detail/detail?type=2&id=' + self.willId
 						}
-					};
-					self.$apis.userInfoUpdate(postData, callback);
-				}
+					})
+				}else{
+					if(self.userInfoData.deadline>0&&self.userInfoData.deadline>Date.parse(new Date())/1000){
+						self.$Router.navigateTo({
+							route: {
+								path: '/pages/detail/detail?type=2&id=' + self.willId
+							}
+						})
+					}else if(self.userInfoData.deadline>0&&self.userInfoData.deadline<Date.parse(new Date())/1000){
+						self.is_show1 = true;
+						return
+					}else if(self.userInfoData.deadline==0){
+						self.is_show1 = true;
+						return
+					}
+					
+				}	
 			},
 			
 			getTipsData() {
@@ -308,7 +257,7 @@
 				const postData = {};
 				postData.searchItem = {
 					thirdapp_id: 2,
-					title:'会员提示',
+					title:'普通会员提示',
 					menu_id: 10
 				};
 				var callback = function(res) {
@@ -326,7 +275,7 @@
 				const postData = {};
 				postData.searchItem = {
 					thirdapp_id: 2,
-					title:'重要提示'
+					title:'重要须知'
 				};
 				var callback = function(res) {
 					if (res.info.data.length > 0) {
@@ -341,16 +290,32 @@
 				const self = this;
 				const postData = {};
 				postData.tokenFuncName = 'getUserToken';
+				postData.getAfter = {
+					staff:{
+						tableName:'User',
+						middleKey:'staff_no',
+						key:'staff_no',
+						searchItem:{
+							status:1,
+							user_type:1
+						},
+						condition:'='
+					}
+				};
 				var callback = function(res) {
 					if (res.info.data.length > 0) {
-						self.userInfoData = res.info.data[0];
-						if(self.userInfoData.behavior==1){
+						self.userInfoData = res.info.data[0].info;
+						if (self.userInfoData.behavior == 1 || self.userInfoData.user_type == 1) {
 							self.isVip = true
 						};
-						
+						if(res.info.data[0].staff&&res.info.data[0].staff[0]&&res.info.data[0].staff[0].info&&res.info.data[0].staff[0].info.phone!=''){
+							self.kefuPhone = res.info.data[0].staff[0].info.phone
+						}else{
+							self.kefuPhone = uni.getStorageSync('user_info').thirdApp.phone
+						}
 					}
 				}
-				self.$apis.userInfoGet(postData, callback);
+				self.$apis.userGet(postData, callback);
 			},
 
 			changeNav(i) {
@@ -373,61 +338,11 @@
 				
 			},
 
-			isShow(id,type) {
-				const self = this;
-				console.log(id)
-				self.willId = id;
-				if(type){
-					if(!self.isVip){
-						self.is_show1 = true;
-						return
-					}
-					
-				};
-				if(self.isVip){
-					self.$Router.navigateTo({
-						route: {
-							path: '/pages/detail/detail?type=2&id=' + id
-						}
-					})
-				}else{
-					if(self.userInfoData.deadline>0&&self.userInfoData.deadline>Date.parse(new Date())/1000){
-						self.$Router.navigateTo({
-							route: {
-								path: '/pages/detail/detail?type=2&id=' + id
-							}
-						})
-					}else if(self.userInfoData.deadline>0&&self.userInfoData.deadline<Date.parse(new Date())/1000){
-						self.is_show1 = true;
-						return
-					}else if(self.userInfoData.deadline==0){
-						self.hasView = false;
-						self.interval = setInterval(function() {
-							self.currentTime--; //每执行一次让倒计时秒数减一
-							self.text='倒计时'+self.currentTime + 's';//按钮文字变成倒计时对应秒数
-							self.hasView = false;
-							//如果当秒数小于等于0时 停止计时器 且按钮文字变成重新发送 且按钮变成可用状态 倒计时的秒数也要恢复成默认秒数 即让获取验证码的按钮恢复到初始化状态只改变按钮文字
-							if (self.currentTime <= 0) {
-								clearInterval(self.interval)
-								
-								self.hasView = true;
-								self.text='可以查看啦';
-								self.currentTime= 10;
-							}
-						}, 1000);
-						self.is_show = !self.is_show
-					}
-					
-				}	
-			},
-
 			getMainData(isNew) {
 				const self = this;
 				const postData = {};
 				if (isNew) {
-					self.dataA = [];
-					self.hotData = [];
-					self.topData = [];
+					
 					self.mainData = [];
 					self.paginate = {
 						count: 0,
@@ -438,24 +353,30 @@
 				};
 				postData.paginate = self.$Utils.cloneForm(self.paginate);
 				postData.searchItem = self.$Utils.cloneForm(self.searchItem)
+				postData.order = {
+					/* top:'desc',
+					hot:'desc',
+					sellout:'asc', */
+					listorder:'asc'
+				};
 				var callback = function(res) {
 					if (res.info.data.length > 0) {
 						
-						self.dataA.push.apply(self.dataA,res.info.data)
-						console.log('self.dataA',self.dataA)
+						self.mainData.push.apply(self.mainData,res.info.data)
+						/* console.log('self.dataA',self.dataA)
 						for (var i = 0; i < self.dataA.length; i++) {
 							if (self.dataA[i].hot == 1) {
 								var hot = [];
 								hot.push(self.dataA[i]);
-								self.hotData = hot[0]
+								self.hotData = hot
 							} else if (self.dataA[i].top == 1) {
 								var top = [];
 								top.push(self.dataA[i]);
-								self.topData = top[0]
+								self.topData = top
 							} else if (self.dataA[i].top == 0 && self.dataA[i].hot == 0) {
 								self.mainData.push(self.dataA[i])
 							}
-						}
+						} */
 						// console.log('hot',self.hotData);
 						// console.log('top',self.topData);
 						// console.log('main',self.mainData);

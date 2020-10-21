@@ -13,7 +13,7 @@
 				<image src="../../static/images/coupons-img.png" v-if="item.transport_status==2" class="cardImg"></image>
 				<view class="p-aXY flex1 px-3 h-100"  style="width: 100%;">
 					<view class="flex-1" style="">
-						<view class="font-30 pb-2" style="width: 70%;height:140rpx">{{item.child&&item.child[0]?item.child[0].title:''}}</view>
+						<view class="font-30 pb-2" style="width: 70%;height:140rpx;font-weight: 700;">{{item.child&&item.child[0]?item.child[0].title:''}}</view>
 						<view class="font-26 pb-2">仅限兑换上述指定商品使用</view>
 						<!-- <view class="font-22">有效期：2019.02.20-2019.11.30</view> -->
 					</view>
@@ -48,6 +48,7 @@
 		
 		onLoad(options) {
 			const self = this;
+			uni.removeStorageSync('choosedAddressData');
 			self.paginate = self.$Utils.cloneForm(self.$AssetsConfig.paginate);
 			self.$Utils.loadAll(['getMainData'], self);
 		},

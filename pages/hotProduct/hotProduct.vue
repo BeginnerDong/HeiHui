@@ -1,6 +1,6 @@
 <template>
 	<view>
-
+	
 		<view class="font-26 color6 flex1 p-3 nav" :class="navCurr==0?'bg-white':''">
 			<view class="flex4" @click="changeNav(0)" :class="navCurr==0?'on':''">
 				<image src="../../static/images/product-icon.png" class="hot-icon" v-if="navCurr==0"></image>
@@ -50,7 +50,7 @@
 					<view class="qySgin">{{item.label[item.menu_id].title}}</view>
 				</view>
 				<view class="colorf d-flex px-2 p-r pb-2  borderDB">
-					<view class="font-32 color2 pl-1">{{item.title}}</view>
+					<view class="font-32 color2 pl-1" :class="isVip||item.top==1||userInfoData.deadline>Date.parse(new Date())/1000?'':'mh'">{{item.title}}</view>
 				</view>
 				
 				<view class="flex3 pt-5 px-2 pb-4">
@@ -228,6 +228,14 @@
 				const self = this;
 				self.is_show = false;
 				self.willId = self.mainData[index].id;
+				if(self.mainData[index].top==1){
+					self.$Router.navigateTo({
+						route: {
+							path: '/pages/detail/detail?type=2&id=' + self.willId
+						}
+					})
+					return
+				};
 				if(self.isVip){
 					self.$Router.navigateTo({
 						route: {
@@ -247,8 +255,22 @@
 					}else if(self.userInfoData.deadline==0){
 						self.is_show1 = true;
 						return
-					}
-					
+						/* const postData = {};
+						postData.tokenFuncName = 'getUserToken';
+						postData.data = {
+							deadline:Date.parse(new Date())/1000 + uni.getStorageSync('user_info').thirdApp.temporary*60 
+						};
+						var callback = function(res) {
+							if (res.solely_code == 100000) {
+								self.$Router.navigateTo({
+									route: {
+										path: '/pages/detail/detail?type=2&id=' + self.willId
+									}
+								})
+							}
+						};
+						self.$apis.userInfoUpdate(postData, callback); */
+					};
 				}	
 			},
 			

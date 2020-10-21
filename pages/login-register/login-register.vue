@@ -10,9 +10,13 @@
 				<image src="../../static/images/the login-icon.png" class="xm-icon"></image>
 				<input type="text" value="" placeholder="姓名" v-model="submitData.name"/>
 			</view>
-			<view class="xx flex1 bB-f5 pt-4 pb-2 mb-2">
+			<view class="xx flex1 bB-f5 pt-4 pb-2 mb-2" v-show="is_show==1">
 				<image src="../../static/images/the login-icon1.png" class="sj-icon"></image>
-				<input type="text" value="" placeholder="手机号或员工登录名" v-model="submitData.phone"/>
+				<input type="text" value="" placeholder="手机号码" v-model="submitData.phone"/>
+			</view>
+			<view class="xx flex1 bB-f5 pt-4 pb-2 mb-2" v-show="is_show==0">
+				<image src="../../static/images/the login-icon1.png" class="sj-icon"></image>
+				<input type="text" value="" placeholder="手机号码或用户名" v-model="submitData.phone"/>
 			</view>
 			<view class="xx flex1 bB-f5 pt-4 pb-2 mb-2" v-show="is_show==0 || is_show==1">
 				<image src="../../static/images/the login-icon2.png" class="mm-icon"></image>
@@ -116,14 +120,14 @@
 		onShow() {
 			const self = this;
 			var param = self.$Utils.getHashParameters()[0];
-			self.$Utils.loadAll(['getArtData'], self);
-			if(param.code){
+			self.$Utils.loadAll(['getArtData','tokenGet'], self);
+			/* if(param.code){
 				return
 			}else{
 				var href = 'http://szegam.com/h5'
 				window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx700af4c0583be8ab&redirect_uri='+
 				encodeURIComponent(href)+'&response_type=code&scope=snsapi_userinfo';
-			}
+			} */
 			
 			
 		},
@@ -294,7 +298,7 @@
 				const self = this;
 				const postData = {
 					searchItem: {
-						user_no: 'U917130956611055'
+						user_no: 'UA1618447373229'
 					}
 				};
 				console.log('postData', postData)

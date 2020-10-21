@@ -118,7 +118,7 @@
 				self.changeLi(self.id)
 			}else{
 				self.liCurr = 0;
-				self.$Utils.loadAll(['getMainData'], self);
+				self.getMainData(true)
 			}
 		},
 		
